@@ -159,7 +159,7 @@
       height: 18px;
       flex-shrink: 0;
       margin-top: 2px;
-      accent-color: #e0ff4f;
+      accent-color: #000000;
       cursor: pointer;
     }
 
@@ -170,12 +170,34 @@
       cursor: pointer;
     }
 
+    .consent-error {
+      display: none;
+      font-size: 0.82rem;
+      color: #ff4f4f;
+      padding-top: 6px;
+    }
+
     .success-msg {
       display: none;
       font-size: 0.95rem;
       color: #e0ff4f;
       padding: 12px 0 0;
     }
+
+    footer {
+      text-align: center;
+      padding: 8px 0 0;
+      font-size: 0.75rem;
+      color: #444;
+    }
+
+    footer a {
+      color: #666;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    footer a:hover { color: #888; }
   </style>
 </head>
 <body>
@@ -213,15 +235,32 @@
           <input type="checkbox" id="consent" required />
           <label for="consent">I agree to receive marketing emails. You can unsubscribe at any time.</label>
         </div>
+        <p class="consent-error" id="consent-error">Please tick the box above to continue.</p>
         <p class="success-msg" id="success-msg">You're in! Check your inbox soon.</p>
       </form>
     </div>
   </div>
+  <footer>Made with <a href="login.html">SRTXRP</a></footer>
 
   <script>
     // ── Swap this URL to change the video ──────────────────────────────────
-    const YOUTUBE_URL = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    const YOUTUBE_URL = localStorage.getItem('srtxrp_video_url') || 'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM';
     // ───────────────────────────────────────────────────────────────────────
+
+    // Apply any editor overrides
+    (function applyEditorContent() {
+      const headline = localStorage.getItem('srtxrp_headline');
+      if (headline) {
+        const i = headline.indexOf(' — ');
+        document.querySelector('h1').innerHTML = i >= 0
+          ? headline.slice(0, i) + ' — <span>' + headline.slice(i + 3) + '</span>'
+          : headline;
+      }
+      const btnText = localStorage.getItem('srtxrp_btn_text');
+      if (btnText) document.querySelector('button[type="submit"]').textContent = btnText;
+      const label = localStorage.getItem('srtxrp_label');
+      if (label) document.querySelector('.form-label').textContent = label;
+    })();
 
     function extractVideoId(url) {
       try {
@@ -286,10 +325,13 @@
       }
 
       const consent = document.getElementById('consent');
+      const consentError = document.getElementById('consent-error');
       if (!consent.checked) {
+        consentError.style.display = 'block';
         consent.focus();
         return;
       }
+      consentError.style.display = 'none';
 
       // Replace this block with your actual form submission / API call
       console.log('Email submitted:', emailInput.value.trim());

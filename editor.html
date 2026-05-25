@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRTXRP — Editor</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #0d0d0d;
+      color: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      padding: 40px 16px 60px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #e0ff4f;
+    }
+
+    .logout-btn {
+      background: none;
+      border: 1px solid #333;
+      color: #888;
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .logout-btn:hover { border-color: #666; color: #bbb; }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 0.8rem;
+      color: #888;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .field .hint {
+      font-size: 0.75rem;
+      color: #555;
+      margin-top: -4px;
+    }
+
+    input[type="text"],
+    input[type="url"] {
+      width: 100%;
+      padding: 13px 16px;
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus,
+    input[type="url"]:focus { border-color: #e0ff4f; }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .save-btn {
+      width: 100%;
+      padding: 14px;
+      background: #e0ff4f;
+      color: #0d0d0d;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .save-btn:hover { opacity: 0.9; }
+
+    .preview-btn {
+      width: 100%;
+      padding: 13px;
+      background: none;
+      border: 1px solid #333;
+      color: #aaa;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .preview-btn:hover { border-color: #666; color: #fff; }
+
+    .saved-msg {
+      display: none;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #e0ff4f;
+      padding: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="top-bar">
+      <span class="brand">SRTXRP</span>
+      <button class="logout-btn" id="logout-btn">Log out</button>
+    </div>
+
+    <h1>Edit Page</h1>
+
+    <div class="fields">
+      <div class="field">
+        <label for="f-headline">Headline</label>
+        <p class="hint">Use " — " to split where yellow colour starts</p>
+        <input type="text" id="f-headline" />
+      </div>
+      <div class="field">
+        <label for="f-video-url">YouTube URL</label>
+        <input type="url" id="f-video-url" placeholder="https://youtu.be/..." />
+      </div>
+      <div class="field">
+        <label for="f-btn-text">Submit Button Text</label>
+        <input type="text" id="f-btn-text" />
+      </div>
+      <div class="field">
+        <label for="f-label">Sub-label Above Form</label>
+        <input type="text" id="f-label" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="save-btn" id="save-btn">Save Changes</button>
+      <p class="saved-msg" id="saved-msg">Saved! Changes are live.</p>
+      <button class="preview-btn" id="preview-btn">Preview Page</button>
+    </div>
+  </div>
+
+  <script>
+    if (localStorage.getItem('srtxrp_auth') !== '1') {
+      window.location.replace('login.html');
+    }
+
+    const DEFAULTS = {
+      headline: "The Footwork That's Taking Over — Watch & Learn Free",
+      videoUrl: 'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM',
+      btnText: 'Get the Free Tutorial',
+      label: 'Get the full breakdown',
+    };
+
+    document.getElementById('f-headline').value =
+      localStorage.getItem('srtxrp_headline') || DEFAULTS.headline;
+    document.getElementById('f-video-url').value =
+      localStorage.getItem('srtxrp_video_url') || DEFAULTS.videoUrl;
+    document.getElementById('f-btn-text').value =
+      localStorage.getItem('srtxrp_btn_text') || DEFAULTS.btnText;
+    document.getElementById('f-label').value =
+      localStorage.getItem('srtxrp_label') || DEFAULTS.label;
+
+    document.getElementById('save-btn').addEventListener('click', function () {
+      localStorage.setItem('srtxrp_headline', document.getElementById('f-headline').value.trim() || DEFAULTS.headline);
+      localStorage.setItem('srtxrp_video_url', document.getElementById('f-video-url').value.trim() || DEFAULTS.videoUrl);
+      localStorage.setItem('srtxrp_btn_text', document.getElementById('f-btn-text').value.trim() || DEFAULTS.btnText);
+      localStorage.setItem('srtxrp_label', document.getElementById('f-label').value.trim() || DEFAULTS.label);
+
+      const msg = document.getElementById('saved-msg');
+      msg.style.display = 'block';
+      setTimeout(function () { msg.style.display = 'none'; }, 3000);
+    });
+
+    document.getElementById('preview-btn').addEventListener('click', function () {
+      window.location.href = 'index.html';
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      localStorage.removeItem('srtxrp_auth');
+      window.location.replace('login.html');
+    });
+  </script>
+</body>
+</html>

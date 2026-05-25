@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRTXRP — Sign In</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: #0d0d0d;
+      color: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .brand {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #e0ff4f;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      color: #888;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 14px 16px;
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="password"]:focus { border-color: #e0ff4f; }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #e0ff4f;
+      color: #0d0d0d;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.9; }
+
+    .error-msg {
+      display: none;
+      font-size: 0.85rem;
+      color: #ff4f4f;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p class="brand">SRTXRP</p>
+    <h1>Sign In</h1>
+    <form id="login-form" novalidate>
+      <div class="field" style="margin-bottom:16px;">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit">Sign In</button>
+      <p class="error-msg" id="error-msg" style="margin-top:12px;">Incorrect password.</p>
+    </form>
+  </div>
+
+  <script>
+    // ── Admin password ──────────────────────────────────────────────────────
+    const PASSWORD = 'Ma$term1nd';
+    // ────────────────────────────────────────────────────────────────────────
+
+    if (localStorage.getItem('srtxrp_auth') === '1') {
+      window.location.replace('editor.html');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const pw = document.getElementById('password').value;
+      const errorMsg = document.getElementById('error-msg');
+      if (pw === PASSWORD) {
+        localStorage.setItem('srtxrp_auth', '1');
+        window.location.replace('editor.html');
+      } else {
+        errorMsg.style.display = 'block';
+        document.getElementById('password').value = '';
+        document.getElementById('password').focus();
+      }
+    });
+  </script>
+</body>
+</html>
