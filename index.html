@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Footwork That's Taking Over</title>
   <style>
+    :root {
+      --accent: #e0ff4f;
+      --bg: #0d0d0d;
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -12,13 +17,13 @@
     }
 
     body {
-      background-color: #0d0d0d;
+      background-color: var(--bg);
       color: #f0f0f0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       padding: 40px 16px 60px;
     }
 
@@ -39,7 +44,7 @@
     }
 
     h1 span {
-      color: #e0ff4f;
+      color: var(--accent);
     }
 
     .video-wrapper {
@@ -71,7 +76,6 @@
     #video-overlay .play-icon {
       width: 64px;
       height: 64px;
-      fill: rgba(255, 255, 255, 0.85);
       filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
       transition: opacity 0.2s;
       pointer-events: none;
@@ -101,9 +105,7 @@
     }
 
     @media (min-width: 420px) {
-      .form-row {
-        flex-direction: row;
-      }
+      .form-row { flex-direction: row; }
     }
 
     input[type="email"] {
@@ -118,18 +120,13 @@
       transition: border-color 0.2s;
     }
 
-    input[type="email"]::placeholder {
-      color: #555;
-    }
-
-    input[type="email"]:focus {
-      border-color: #e0ff4f;
-    }
+    input[type="email"]::placeholder { color: #555; }
+    input[type="email"]:focus { border-color: var(--accent); }
 
     button[type="submit"] {
       padding: 14px 22px;
-      background: #e0ff4f;
-      color: #0d0d0d;
+      background: var(--accent);
+      color: var(--bg);
       font-size: 0.95rem;
       font-weight: 700;
       border: none;
@@ -139,13 +136,8 @@
       transition: opacity 0.2s, transform 0.1s;
     }
 
-    button[type="submit"]:hover {
-      opacity: 0.9;
-    }
-
-    button[type="submit"]:active {
-      transform: scale(0.98);
-    }
+    button[type="submit"]:hover { opacity: 0.9; }
+    button[type="submit"]:active { transform: scale(0.98); }
 
     .consent-row {
       display: flex;
@@ -180,13 +172,15 @@
     .success-msg {
       display: none;
       font-size: 0.95rem;
-      color: #e0ff4f;
+      color: var(--accent);
       padding: 12px 0 0;
     }
 
     footer {
+      width: 100%;
+      max-width: 640px;
       text-align: center;
-      padding: 8px 0 0;
+      padding: 24px 0 0;
       font-size: 0.75rem;
       color: #444;
     }
@@ -199,6 +193,33 @@
 
     footer a:hover { color: #888; }
   </style>
+
+  <!-- ── Firebase (optional) — paste your config to enable cross-device sync ── -->
+  <script type="module">
+    const firebaseConfig = {
+      apiKey:            'PASTE_API_KEY',
+      authDomain:        'PASTE_AUTH_DOMAIN',
+      projectId:         'PASTE_PROJECT_ID',
+      storageBucket:     'PASTE_STORAGE_BUCKET',
+      messagingSenderId: 'PASTE_SENDER_ID',
+      appId:             'PASTE_APP_ID',
+    };
+
+    if (firebaseConfig.projectId !== 'PASTE_PROJECT_ID') {
+      (async () => {
+        try {
+          const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+          const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+          const app = initializeApp(firebaseConfig);
+          const db  = getFirestore(app);
+          window.__fsPageDoc = doc(db, 'settings', 'page');
+          window.__fsGet     = getDoc;
+          window.dispatchEvent(new Event('firebase-ready'));
+        } catch (e) {}
+      })();
+    }
+  </script>
+  <!-- ──────────────────────────────────────────────────────────────────────── -->
 </head>
 <body>
   <div class="container">
@@ -240,36 +261,44 @@
       </form>
     </div>
   </div>
+
   <footer>Made with <a href="login.html">SRTXRP</a></footer>
 
   <script>
-    // ── Swap this URL to change the video ──────────────────────────────────
-    const YOUTUBE_URL = localStorage.getItem('srtxrp_video_url') || 'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM';
+    // ── Apply colors from localStorage (instant, before paint) ─────────────
+    const _accent = localStorage.getItem('srtxrp_accent');
+    const _bg     = localStorage.getItem('srtxrp_bg');
+    if (_accent) document.documentElement.style.setProperty('--accent', _accent);
+    if (_bg)     document.documentElement.style.setProperty('--bg', _bg);
+
+    // ── YouTube URL (localStorage override or default) ─────────────────────
+    // ── Swap default below OR use the editor to change it ─────────────────
+    let YOUTUBE_URL = localStorage.getItem('srtxrp_video_url') || 'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM';
     // ───────────────────────────────────────────────────────────────────────
 
-    // Apply any editor overrides
-    (function applyEditorContent() {
-      const headline = localStorage.getItem('srtxrp_headline');
-      if (headline) {
-        const i = headline.indexOf(' — ');
-        document.querySelector('h1').innerHTML = i >= 0
-          ? headline.slice(0, i) + ' — <span>' + headline.slice(i + 3) + '</span>'
-          : headline;
-      }
-      const btnText = localStorage.getItem('srtxrp_btn_text');
-      if (btnText) document.querySelector('button[type="submit"]').textContent = btnText;
-      const label = localStorage.getItem('srtxrp_label');
-      if (label) document.querySelector('.form-label').textContent = label;
+    function applyHeadline(text) {
+      const i = text.indexOf(' — ');
+      document.querySelector('h1').innerHTML = i >= 0
+        ? text.slice(0, i) + ' — <span>' + text.slice(i + 3) + '</span>'
+        : text;
+    }
+
+    // Apply content overrides from localStorage
+    (function () {
+      const h = localStorage.getItem('srtxrp_headline');
+      if (h) applyHeadline(h);
+      const b = localStorage.getItem('srtxrp_btn_text');
+      if (b) document.querySelector('button[type="submit"]').textContent = b;
+      const l = localStorage.getItem('srtxrp_label');
+      if (l) document.querySelector('.form-label').textContent = l;
     })();
 
     function extractVideoId(url) {
       try {
         const u = new URL(url);
-        if (u.hostname === 'youtu.be') return u.pathname.slice(1);
+        if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
         return u.searchParams.get('v');
-      } catch {
-        return null;
-      }
+      } catch { return null; }
     }
 
     let player;
@@ -278,24 +307,12 @@
     window.onYouTubeIframeAPIReady = function () {
       const videoId = extractVideoId(YOUTUBE_URL);
       if (!videoId) return;
-
       player = new YT.Player('yt-player', {
         videoId: videoId,
-        playerVars: {
-          playsinline: 1,
-          rel: 0,
-          fs: 0,
-          modestbranding: 1,
-          iv_load_policy: 3,
-          enablejsapi: 1,
-        },
+        playerVars: { playsinline: 1, rel: 0, fs: 0, modestbranding: 1, iv_load_policy: 3, enablejsapi: 1 },
         events: {
           onStateChange: function (e) {
-            if (e.data === YT.PlayerState.PLAYING) {
-              overlay.classList.add('playing');
-            } else {
-              overlay.classList.remove('playing');
-            }
+            overlay.classList.toggle('playing', e.data === YT.PlayerState.PLAYING);
           },
         },
       });
@@ -303,29 +320,45 @@
 
     overlay.addEventListener('click', function () {
       if (!player) return;
-      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
-        player.pauseVideo();
-      } else {
-        player.playVideo();
-      }
+      player.getPlayerState() === YT.PlayerState.PLAYING ? player.pauseVideo() : player.playVideo();
     });
 
     const tag = document.createElement('script');
     tag.src = 'https://www.youtube.com/iframe_api';
     document.head.appendChild(tag);
 
+    // ── Firestore sync (updates page once Firebase loads) ──────────────────
+    window.addEventListener('firebase-ready', async function () {
+      try {
+        const snap = await window.__fsGet(window.__fsPageDoc);
+        if (!snap.exists()) return;
+        const d = snap.data();
+        if (d.accent)   { document.documentElement.style.setProperty('--accent', d.accent);  localStorage.setItem('srtxrp_accent', d.accent); }
+        if (d.bg)       { document.documentElement.style.setProperty('--bg', d.bg);           localStorage.setItem('srtxrp_bg', d.bg); }
+        if (d.headline) { applyHeadline(d.headline);                                           localStorage.setItem('srtxrp_headline', d.headline); }
+        if (d.btnText)  { document.querySelector('button[type="submit"]').textContent = d.btnText; localStorage.setItem('srtxrp_btn_text', d.btnText); }
+        if (d.label)    { document.querySelector('.form-label').textContent = d.label;         localStorage.setItem('srtxrp_label', d.label); }
+        if (d.videoUrl) {
+          localStorage.setItem('srtxrp_video_url', d.videoUrl);
+          const id = extractVideoId(d.videoUrl);
+          if (id && player && d.videoUrl !== YOUTUBE_URL) player.loadVideoById(id);
+          YOUTUBE_URL = d.videoUrl;
+        }
+      } catch (e) {}
+    });
+    // ───────────────────────────────────────────────────────────────────────
+
     document.getElementById('opt-in-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      const emailInput = document.getElementById('email-input');
-      const successMsg = document.getElementById('success-msg');
+      const emailInput  = document.getElementById('email-input');
+      const consent     = document.getElementById('consent');
+      const consentError = document.getElementById('consent-error');
+      const successMsg  = document.getElementById('success-msg');
 
       if (!emailInput.validity.valid || !emailInput.value.trim()) {
         emailInput.focus();
         return;
       }
-
-      const consent = document.getElementById('consent');
-      const consentError = document.getElementById('consent-error');
       if (!consent.checked) {
         consentError.style.display = 'block';
         consent.focus();
