@@ -43,6 +43,7 @@
     }
 
     .video-wrapper {
+      position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
       border-radius: 10px;
@@ -55,6 +56,29 @@
       height: 100%;
       border: none;
       display: block;
+    }
+
+    #video-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #video-overlay .play-icon {
+      width: 64px;
+      height: 64px;
+      fill: rgba(255, 255, 255, 0.85);
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
+      transition: opacity 0.2s;
+      pointer-events: none;
+    }
+
+    #video-overlay.playing .play-icon {
+      opacity: 0;
     }
 
     .form-section {
@@ -136,10 +160,15 @@
     <h1>The Footwork That's Taking Over — <span>Watch &amp; Learn Free</span></h1>
 
     <div class="video-wrapper">
+      <div id="video-overlay">
+        <svg class="play-icon" viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="40" cy="40" r="40" fill="rgba(0,0,0,0.45)"/>
+          <polygon points="32,22 62,40 32,58" fill="rgba(255,255,255,0.9)"/>
+        </svg>
+      </div>
       <iframe
         id="yt-player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
         title="Footwork Tutorial"
       ></iframe>
     </div>
@@ -177,11 +206,47 @@
       }
     }
 
-    const videoId = extractVideoId(YOUTUBE_URL);
-    if (videoId) {
-      document.getElementById('yt-player').src =
-        `https://www.youtube-nocookie.com/embed/${videoId}?playsinline=1&rel=0`;
-    }
+    let player;
+    const overlay = document.getElementById('video-overlay');
+
+    window.onYouTubeIframeAPIReady = function () {
+      const videoId = extractVideoId(YOUTUBE_URL);
+      if (!videoId) return;
+
+      player = new YT.Player('yt-player', {
+        videoId: videoId,
+        playerVars: {
+          playsinline: 1,
+          rel: 0,
+          fs: 0,
+          modestbranding: 1,
+          iv_load_policy: 3,
+          enablejsapi: 1,
+        },
+        events: {
+          onStateChange: function (e) {
+            if (e.data === YT.PlayerState.PLAYING) {
+              overlay.classList.add('playing');
+            } else {
+              overlay.classList.remove('playing');
+            }
+          },
+        },
+      });
+    };
+
+    overlay.addEventListener('click', function () {
+      if (!player) return;
+      if (player.getPlayerState() === YT.PlayerState.PLAYING) {
+        player.pauseVideo();
+      } else {
+        player.playVideo();
+      }
+    });
+
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
 
     document.getElementById('opt-in-form').addEventListener('submit', function (e) {
       e.preventDefault();
