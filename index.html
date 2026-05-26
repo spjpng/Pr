@@ -394,12 +394,16 @@
     });
     // ───────────────────────────────────────────────────────────────────────
 
+    // ── Google Sheets endpoint — paste your Apps Script URL here ─────────
+    const SHEETS_URL = 'PASTE_YOUR_APPS_SCRIPT_URL';
+    // ─────────────────────────────────────────────────────────────────────
+
     document.getElementById('opt-in-form').addEventListener('submit', function (e) {
       e.preventDefault();
-      const emailInput  = document.getElementById('email-input');
-      const consent     = document.getElementById('consent');
+      const emailInput   = document.getElementById('email-input');
+      const consent      = document.getElementById('consent');
       const consentError = document.getElementById('consent-error');
-      const successMsg  = document.getElementById('success-msg');
+      const successMsg   = document.getElementById('success-msg');
 
       if (!emailInput.validity.valid || !emailInput.value.trim()) {
         emailInput.focus();
@@ -412,8 +416,17 @@
       }
       consentError.style.display = 'none';
 
-      // Replace this block with your actual form submission / API call
-      console.log('Email submitted:', emailInput.value.trim());
+      const email = emailInput.value.trim();
+
+      // Send to Google Sheets if URL is configured
+      if (SHEETS_URL !== 'PASTE_YOUR_APPS_SCRIPT_URL') {
+        fetch(SHEETS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ email: email, timestamp: new Date().toISOString() }),
+        }).catch(function () {});
+      }
 
       emailInput.value = '';
       emailInput.disabled = true;
