@@ -17,167 +17,138 @@
       padding: 40px 16px 60px;
     }
 
-    .container {
-      width: 100%;
-      max-width: 560px;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
+    .container { width: 100%; max-width: 560px; display: flex; flex-direction: column; gap: 32px; }
 
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+    .top-bar { display: flex; align-items: center; justify-content: space-between; }
 
-    .brand {
-      font-size: 1rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      color: #e0ff4f;
-    }
+    .brand { font-size: 1rem; font-weight: 800; letter-spacing: 0.1em; color: #e0ff4f; }
 
     .logout-btn {
-      background: none;
-      border: 1px solid #333;
-      color: #888;
-      font-size: 0.8rem;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
+      background: none; border: 1px solid #333; color: #888;
+      font-size: 0.8rem; padding: 6px 14px; border-radius: 6px; cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
     }
-
     .logout-btn:hover { border-color: #666; color: #bbb; }
 
     h1 { font-size: 1.5rem; font-weight: 800; color: #ffffff; }
 
     .section-title {
-      font-size: 0.75rem;
-      color: #555;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding-bottom: 4px;
-      border-bottom: 1px solid #1e1e1e;
+      font-size: 0.75rem; color: #555; letter-spacing: 0.08em;
+      text-transform: uppercase; padding-bottom: 4px;
+      border-bottom: 1px solid #1e1e1e; margin-bottom: 20px;
     }
 
     .fields { display: flex; flex-direction: column; gap: 20px; }
+    .field  { display: flex; flex-direction: column; gap: 8px; }
 
-    .field { display: flex; flex-direction: column; gap: 8px; }
-
-    .field label {
-      font-size: 0.8rem;
-      color: #888;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    .field .hint {
-      font-size: 0.75rem;
-      color: #555;
-      margin-top: -4px;
-    }
+    .field label { font-size: 0.8rem; color: #888; letter-spacing: 0.04em; text-transform: uppercase; }
+    .field .hint { font-size: 0.75rem; color: #555; margin-top: -4px; }
 
     input[type="text"],
-    input[type="url"] {
-      width: 100%;
-      padding: 13px 16px;
-      background: #1a1a1a;
-      border: 1px solid #2e2e2e;
-      border-radius: 8px;
-      color: #f0f0f0;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
+    input[type="url"],
+    textarea {
+      width: 100%; padding: 13px 16px;
+      background: #1a1a1a; border: 1px solid #2e2e2e;
+      border-radius: 8px; color: #f0f0f0; font-size: 0.95rem;
+      outline: none; transition: border-color 0.2s;
+      font-family: inherit;
     }
+    input[type="text"]:focus, input[type="url"]:focus, textarea:focus { border-color: #e0ff4f; }
 
-    input[type="text"]:focus,
-    input[type="url"]:focus { border-color: #e0ff4f; }
-
-    .color-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .color-row { display: flex; align-items: center; gap: 12px; }
 
     input[type="color"] {
-      width: 44px;
-      height: 44px;
-      border: 1px solid #2e2e2e;
-      border-radius: 8px;
-      background: #1a1a1a;
-      cursor: pointer;
-      padding: 2px;
-      flex-shrink: 0;
+      width: 44px; height: 44px; border: 1px solid #2e2e2e;
+      border-radius: 8px; background: #1a1a1a; cursor: pointer;
+      padding: 2px; flex-shrink: 0;
     }
 
     .color-hex {
-      flex: 1;
-      padding: 13px 16px;
-      background: #1a1a1a;
-      border: 1px solid #2e2e2e;
-      border-radius: 8px;
-      color: #f0f0f0;
-      font-size: 0.95rem;
-      font-family: monospace;
-      outline: none;
-      transition: border-color 0.2s;
+      flex: 1; padding: 13px 16px; background: #1a1a1a; border: 1px solid #2e2e2e;
+      border-radius: 8px; color: #f0f0f0; font-size: 0.95rem;
+      font-family: monospace; outline: none; transition: border-color 0.2s;
     }
-
     .color-hex:focus { border-color: #e0ff4f; }
 
+    /* ── Survey section ── */
+    .step-card {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .step-num { font-size: 0.75rem; color: #555; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .remove-step-btn {
+      background: none; border: 1px solid #2e2e2e; color: #666;
+      font-size: 0.75rem; padding: 4px 10px; border-radius: 5px; cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .remove-step-btn:hover { border-color: #ff4f4f; color: #ff4f4f; }
+
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .option-row input { flex: 1; }
+
+    .remove-option-btn {
+      background: none; border: none; color: #555; font-size: 1.1rem;
+      cursor: pointer; padding: 4px 6px; border-radius: 4px; flex-shrink: 0;
+      transition: color 0.2s;
+    }
+    .remove-option-btn:hover { color: #ff4f4f; }
+
+    .add-option-btn {
+      background: none; border: 1px dashed #2e2e2e; color: #666;
+      font-size: 0.8rem; padding: 8px; border-radius: 6px; cursor: pointer;
+      width: 100%; text-align: center; transition: border-color 0.2s, color 0.2s;
+    }
+    .add-option-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
+
+    .add-step-btn {
+      background: none; border: 1px dashed #2e2e2e; color: #666;
+      font-size: 0.85rem; padding: 12px; border-radius: 8px; cursor: pointer;
+      width: 100%; text-align: center; transition: border-color 0.2s, color 0.2s;
+    }
+    .add-step-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
+
+    /* ── Actions ── */
     .actions { display: flex; flex-direction: column; gap: 10px; }
 
     .save-btn {
-      width: 100%;
-      padding: 14px;
-      background: #e0ff4f;
-      color: #0d0d0d;
-      font-size: 1rem;
-      font-weight: 700;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: opacity 0.2s;
+      width: 100%; padding: 14px; background: #e0ff4f; color: #0d0d0d;
+      font-size: 1rem; font-weight: 700; border: none; border-radius: 8px;
+      cursor: pointer; transition: opacity 0.2s;
     }
-
     .save-btn:hover { opacity: 0.9; }
     .save-btn:disabled { opacity: 0.6; cursor: default; }
 
     .preview-btn {
-      width: 100%;
-      padding: 13px;
-      background: none;
-      border: 1px solid #333;
-      color: #aaa;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
+      width: 100%; padding: 13px; background: none; border: 1px solid #333;
+      color: #aaa; font-size: 0.95rem; font-weight: 600; border-radius: 8px;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
     }
-
     .preview-btn:hover { border-color: #666; color: #fff; }
 
-    .saved-msg {
-      display: none;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #e0ff4f;
-      padding: 4px 0;
-    }
-
-    .sync-badge {
-      font-size: 0.72rem;
-      color: #555;
-      text-align: center;
-    }
-
+    .saved-msg { display: none; text-align: center; font-size: 0.9rem; color: #e0ff4f; padding: 4px 0; }
+    .sync-badge { font-size: 0.72rem; color: #555; text-align: center; }
     .sync-badge.active { color: #4fc3f7; }
   </style>
 
-  <!-- ── Firebase (optional) — paste your config to enable cross-device sync ── -->
+  <!-- ── Firebase (optional) ── -->
   <script type="module">
     const firebaseConfig = {
       apiKey:            'PASTE_API_KEY',
@@ -205,18 +176,17 @@
             if (!user) window.location.replace('login.html');
           });
 
-          window.__auth             = auth;
-          window.__signOut          = signOut;
-          window.__fsPageDoc        = doc(db, 'settings', 'page');
-          window.__fsSet            = setDoc;
-          window.__fsGet            = getDoc;
+          window.__auth               = auth;
+          window.__signOut            = signOut;
+          window.__fsPageDoc          = doc(db, 'settings', 'page');
+          window.__fsSet              = setDoc;
+          window.__fsGet              = getDoc;
           window.__firebaseConfigured = true;
           window.dispatchEvent(new Event('firebase-ready'));
         } catch (e) {}
       })();
     }
   </script>
-  <!-- ──────────────────────────────────────────────────────────────────────── -->
 </head>
 <body>
   <div class="container">
@@ -227,8 +197,9 @@
 
     <h1>Edit Page</h1>
 
+    <!-- Content -->
     <div>
-      <p class="section-title" style="margin-bottom:20px;">Content</p>
+      <p class="section-title">Content</p>
       <div class="fields">
         <div class="field">
           <label for="f-headline">Headline</label>
@@ -240,7 +211,7 @@
           <input type="url" id="f-video-url" placeholder="https://youtu.be/..." />
         </div>
         <div class="field">
-          <label for="f-btn-text">Button Text</label>
+          <label for="f-btn-text">CTA Button Text</label>
           <input type="text" id="f-btn-text" />
         </div>
         <div class="field">
@@ -250,8 +221,9 @@
       </div>
     </div>
 
+    <!-- Colors -->
     <div>
-      <p class="section-title" style="margin-bottom:20px;">Colors</p>
+      <p class="section-title">Colors</p>
       <div class="fields">
         <div class="field">
           <label>Accent Color</label>
@@ -271,6 +243,42 @@
       </div>
     </div>
 
+    <!-- Survey / Workflow -->
+    <div>
+      <p class="section-title">Survey / Workflow</p>
+      <p class="hint" style="margin-bottom:16px;color:#555;font-size:0.8rem;">Shown after email is submitted. Multiple choice — visitors pick one option per step.</p>
+      <div id="steps-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+      <button class="add-step-btn" id="add-step-btn" style="margin-top:12px;">＋ Add Step</button>
+    </div>
+
+    <!-- Legal & Compliance -->
+    <div>
+      <p class="section-title">Legal &amp; Compliance</p>
+      <div class="fields">
+        <div class="field">
+          <label for="f-consent-text">Consent Checkbox Text</label>
+          <textarea id="f-consent-text" rows="2" style="resize:vertical;"></textarea>
+        </div>
+        <div class="field">
+          <label for="f-privacy-label">Privacy Policy Link Text</label>
+          <input type="text" id="f-privacy-label" placeholder="Privacy Policy" />
+        </div>
+        <div class="field">
+          <label for="f-privacy-url">Privacy Policy URL</label>
+          <input type="url" id="f-privacy-url" placeholder="https://..." />
+        </div>
+        <div class="field">
+          <label for="f-tos-label">Terms of Service Link Text</label>
+          <input type="text" id="f-tos-label" placeholder="Terms of Service" />
+        </div>
+        <div class="field">
+          <label for="f-tos-url">Terms of Service URL</label>
+          <input type="url" id="f-tos-url" placeholder="https://..." />
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
     <div class="actions">
       <button class="save-btn" id="save-btn">Save Changes</button>
       <p class="saved-msg" id="saved-msg">Saved!</p>
@@ -280,21 +288,33 @@
   </div>
 
   <script>
-    // Fallback auth check (used when Firebase is not configured)
+    // Fallback auth check
     if (!window.__firebaseConfigured && localStorage.getItem('srtxrp_auth') !== '1') {
       window.location.replace('login.html');
     }
 
     const DEFAULTS = {
-      headline: "The Footwork That's Taking Over — Watch & Learn Free",
-      videoUrl:  'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM',
-      btnText:   'Get the Free Tutorial',
-      label:     'Get the full breakdown',
-      accent:    '#e0ff4f',
-      bg:        '#0d0d0d',
+      headline:     "The Footwork That's Taking Over — Watch & Learn Free",
+      videoUrl:     'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM',
+      btnText:      'Get the Free Tutorial',
+      label:        'Get the full breakdown',
+      accent:       '#e0ff4f',
+      bg:           '#0d0d0d',
+      consentText:  'I agree to receive marketing emails. You can unsubscribe at any time.',
+      privacyLabel: 'Privacy Policy',
+      privacyUrl:   '',
+      tosLabel:     'Terms of Service',
+      tosUrl:       '',
     };
 
-    // Populate fields from localStorage or defaults
+    const DEFAULT_STEPS = [
+      { question: "What's your current level?",
+        options: ['Complete beginner', 'Some experience', 'Already decent'] },
+      { question: "What's your goal?",
+        options: ['Learn the basics', 'Improve my footwork', 'Perform with confidence'] },
+    ];
+
+    // ── Populate content fields ─────────────────────────────────────────────
     document.getElementById('f-headline').value  = localStorage.getItem('srtxrp_headline')  || DEFAULTS.headline;
     document.getElementById('f-video-url').value = localStorage.getItem('srtxrp_video_url') || DEFAULTS.videoUrl;
     document.getElementById('f-btn-text').value  = localStorage.getItem('srtxrp_btn_text')  || DEFAULTS.btnText;
@@ -307,7 +327,14 @@
     document.getElementById('bg-picker').value     = initBg;
     document.getElementById('bg-hex').value        = initBg;
 
-    // Sync color picker ↔ hex input
+    // ── Populate legal fields ───────────────────────────────────────────────
+    document.getElementById('f-consent-text').value  = localStorage.getItem('srtxrp_consent_text')  || DEFAULTS.consentText;
+    document.getElementById('f-privacy-label').value = localStorage.getItem('srtxrp_privacy_label') || DEFAULTS.privacyLabel;
+    document.getElementById('f-privacy-url').value   = localStorage.getItem('srtxrp_privacy_url')   || DEFAULTS.privacyUrl;
+    document.getElementById('f-tos-label').value     = localStorage.getItem('srtxrp_tos_label')     || DEFAULTS.tosLabel;
+    document.getElementById('f-tos-url').value       = localStorage.getItem('srtxrp_tos_url')       || DEFAULTS.tosUrl;
+
+    // ── Color pickers ───────────────────────────────────────────────────────
     function wireColorPair(pickerId, hexId) {
       const picker = document.getElementById(pickerId);
       const hex    = document.getElementById(hexId);
@@ -319,7 +346,119 @@
     wireColorPair('accent-picker', 'accent-hex');
     wireColorPair('bg-picker', 'bg-hex');
 
-    // Update sync badge when Firebase is ready
+    // ── Survey step builder ─────────────────────────────────────────────────
+    let surveySteps = DEFAULT_STEPS;
+    try {
+      const stored = localStorage.getItem('srtxrp_workflow');
+      if (stored) surveySteps = JSON.parse(stored);
+    } catch (e) {}
+
+    const stepsList = document.getElementById('steps-list');
+
+    function renderSteps() {
+      stepsList.innerHTML = '';
+      surveySteps.forEach(function (step, idx) {
+        stepsList.appendChild(buildStepCard(step, idx));
+      });
+    }
+
+    function buildStepCard(step, idx) {
+      const card = document.createElement('div');
+      card.className = 'step-card';
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'step-header';
+      const num = document.createElement('span');
+      num.className = 'step-num';
+      num.textContent = 'Step ' + (idx + 1);
+      const removeStep = document.createElement('button');
+      removeStep.className = 'remove-step-btn';
+      removeStep.type = 'button';
+      removeStep.textContent = 'Remove';
+      removeStep.addEventListener('click', function () {
+        surveySteps.splice(idx, 1);
+        renderSteps();
+      });
+      header.appendChild(num);
+      header.appendChild(removeStep);
+      card.appendChild(header);
+
+      // Question input
+      const qField = document.createElement('div');
+      qField.className = 'field';
+      const qLabel = document.createElement('label');
+      qLabel.textContent = 'Question';
+      const qInput = document.createElement('input');
+      qInput.type = 'text';
+      qInput.placeholder = 'Ask your question...';
+      qInput.value = step.question || '';
+      qInput.addEventListener('input', function () { surveySteps[idx].question = qInput.value; });
+      qField.appendChild(qLabel);
+      qField.appendChild(qInput);
+      card.appendChild(qField);
+
+      // Options
+      const optField = document.createElement('div');
+      optField.className = 'field';
+      const optLabel = document.createElement('label');
+      optLabel.textContent = 'Options';
+      optField.appendChild(optLabel);
+
+      const optList = document.createElement('div');
+      optList.style.display = 'flex';
+      optList.style.flexDirection = 'column';
+      optList.style.gap = '8px';
+
+      function renderOptions() {
+        optList.innerHTML = '';
+        (surveySteps[idx].options || []).forEach(function (opt, oi) {
+          const row = document.createElement('div');
+          row.className = 'option-row';
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = opt;
+          input.placeholder = 'Option ' + (oi + 1);
+          input.addEventListener('input', function () { surveySteps[idx].options[oi] = input.value; });
+          const removeOpt = document.createElement('button');
+          removeOpt.className = 'remove-option-btn';
+          removeOpt.type = 'button';
+          removeOpt.textContent = '×';
+          removeOpt.addEventListener('click', function () {
+            surveySteps[idx].options.splice(oi, 1);
+            renderOptions();
+          });
+          row.appendChild(input);
+          row.appendChild(removeOpt);
+          optList.appendChild(row);
+        });
+
+        const addOpt = document.createElement('button');
+        addOpt.className = 'add-option-btn';
+        addOpt.type = 'button';
+        addOpt.textContent = '＋ Add option';
+        addOpt.addEventListener('click', function () {
+          surveySteps[idx].options.push('');
+          renderOptions();
+        });
+        optList.appendChild(addOpt);
+      }
+
+      renderOptions();
+      optField.appendChild(optList);
+      card.appendChild(optField);
+
+      return card;
+    }
+
+    document.getElementById('add-step-btn').addEventListener('click', function () {
+      surveySteps.push({ question: '', options: ['', ''] });
+      renderSteps();
+    });
+
+    renderSteps();
+    // ───────────────────────────────────────────────────────────────────────
+
     window.addEventListener('firebase-ready', function () {
       const badge = document.getElementById('sync-badge');
       badge.textContent = 'Syncing across devices via Firebase';
@@ -334,15 +473,15 @@
       const bg     = document.getElementById('bg-hex').value     || DEFAULTS.bg;
 
       const data = {
-        headline: document.getElementById('f-headline').value.trim()  || DEFAULTS.headline,
-        videoUrl: document.getElementById('f-video-url').value.trim() || DEFAULTS.videoUrl,
-        btnText:  document.getElementById('f-btn-text').value.trim()  || DEFAULTS.btnText,
-        label:    document.getElementById('f-label').value.trim()     || DEFAULTS.label,
-        accent:   accent,
-        bg:       bg,
+        headline:    document.getElementById('f-headline').value.trim()  || DEFAULTS.headline,
+        videoUrl:    document.getElementById('f-video-url').value.trim() || DEFAULTS.videoUrl,
+        btnText:     document.getElementById('f-btn-text').value.trim()  || DEFAULTS.btnText,
+        label:       document.getElementById('f-label').value.trim()     || DEFAULTS.label,
+        accent:      accent,
+        bg:          bg,
       };
 
-      // Always save to localStorage
+      // Save content + colors to localStorage
       localStorage.setItem('srtxrp_headline',  data.headline);
       localStorage.setItem('srtxrp_video_url', data.videoUrl);
       localStorage.setItem('srtxrp_btn_text',  data.btnText);
@@ -350,11 +489,19 @@
       localStorage.setItem('srtxrp_accent',    data.accent);
       localStorage.setItem('srtxrp_bg',        data.bg);
 
-      // Also save to Firestore if configured
+      // Save survey workflow
+      localStorage.setItem('srtxrp_workflow', JSON.stringify(surveySteps));
+
+      // Save legal/compliance settings
+      localStorage.setItem('srtxrp_consent_text',  document.getElementById('f-consent-text').value.trim()  || DEFAULTS.consentText);
+      localStorage.setItem('srtxrp_privacy_label', document.getElementById('f-privacy-label').value.trim() || DEFAULTS.privacyLabel);
+      localStorage.setItem('srtxrp_privacy_url',   document.getElementById('f-privacy-url').value.trim());
+      localStorage.setItem('srtxrp_tos_label',     document.getElementById('f-tos-label').value.trim()     || DEFAULTS.tosLabel);
+      localStorage.setItem('srtxrp_tos_url',       document.getElementById('f-tos-url').value.trim());
+
+      // Firestore sync (content + colors only for now — Firebase deferred for new fields)
       if (window.__firebaseConfigured && window.__fsPageDoc) {
-        try {
-          await window.__fsSet(window.__fsPageDoc, data, { merge: true });
-        } catch (e) {}
+        try { await window.__fsSet(window.__fsPageDoc, data, { merge: true }); } catch (e) {}
       }
 
       const msg = document.getElementById('saved-msg');
