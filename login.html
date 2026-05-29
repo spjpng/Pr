@@ -92,40 +92,25 @@
     }
   </style>
 
-  <!-- ── Firebase (optional) — paste your config to enable secure auth ──────── -->
-  <script type="module">
-    const firebaseConfig = {
-      apiKey:            'PASTE_API_KEY',
-      authDomain:        'PASTE_AUTH_DOMAIN',
-      projectId:         'PASTE_PROJECT_ID',
-      storageBucket:     'PASTE_STORAGE_BUCKET',
-      messagingSenderId: 'PASTE_SENDER_ID',
-      appId:             'PASTE_APP_ID',
-    };
-
-    if (firebaseConfig.projectId !== 'PASTE_PROJECT_ID') {
-      (async () => {
-        try {
-          const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-          const { getAuth, signInWithEmailAndPassword, onAuthStateChanged } =
-            await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
-          const app  = initializeApp(firebaseConfig);
-          const auth = getAuth(app);
-
-          // Already signed in → skip login page
-          onAuthStateChanged(auth, function (user) {
-            if (user) window.location.replace('editor.html');
-          });
-
-          window.__firebaseAuth       = auth;
-          window.__signIn             = signInWithEmailAndPassword;
-          window.__firebaseConfigured = true;
-          window.dispatchEvent(new Event('firebase-ready'));
-        } catch (e) {}
-      })();
-    }
+  <script>
+    (async function () {
+      try {
+        const cfg = await fetch('/api/config').then(function (r) { return r.json(); });
+        if (!cfg.projectId) return;
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+        const { getAuth, signInWithEmailAndPassword, onAuthStateChanged } =
+          await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+        const auth = getAuth(initializeApp(cfg));
+        onAuthStateChanged(auth, function (user) {
+          if (user) window.location.replace('editor.html');
+        });
+        window.__firebaseAuth       = auth;
+        window.__signIn             = signInWithEmailAndPassword;
+        window.__firebaseConfigured = true;
+        window.dispatchEvent(new Event('firebase-ready'));
+      } catch (e) {}
+    })();
   </script>
-  <!-- ────────────────────────────────────────────────────────────────────────── -->
 </head>
 <body>
   <div class="card">
@@ -148,16 +133,10 @@
   </div>
 
   <script>
-    // ── Fallback password (used only when Firebase is not configured) ────────
-    const FALLBACK_PASSWORD = 'Ma$term1nd';
-    // ─────────────────────────────────────────────────────────────────────────
-
-    // Hide email field until Firebase is confirmed — fallback only needs password
     const emailField = document.getElementById('email-field');
     emailField.style.display = 'none';
 
     window.addEventListener('firebase-ready', function () {
-      // Firebase is live — show email field for proper auth
       emailField.style.display = 'flex';
     });
 
@@ -172,7 +151,6 @@
       btn.disabled = true;
 
       if (window.__firebaseConfigured) {
-        // Firebase Auth path
         try {
           await window.__signIn(window.__firebaseAuth, email, password);
           window.location.replace('editor.html');
@@ -182,19 +160,28 @@
           btn.disabled = false;
         }
       } else {
-        // Fallback: hardcoded password (works locally before Firebase is set up)
-        if (password === FALLBACK_PASSWORD) {
-          localStorage.setItem('srtxrp_auth', '1');
-          window.location.replace('editor.html');
-        } else {
-          errorMsg.textContent = 'Incorrect password.';
+        try {
+          const res = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
+          });
+          if (res.ok) {
+            localStorage.setItem('srtxrp_auth', '1');
+            window.location.replace('editor.html');
+          } else {
+            errorMsg.textContent = 'Incorrect password.';
+            errorMsg.style.display = 'block';
+            btn.disabled = false;
+          }
+        } catch (err) {
+          errorMsg.textContent = 'Could not connect. Try again.';
           errorMsg.style.display = 'block';
           btn.disabled = false;
         }
       }
     });
 
-    // Fallback auth: already logged in locally
     if (!window.__firebaseConfigured && localStorage.getItem('srtxrp_auth') === '1') {
       window.location.replace('editor.html');
     }

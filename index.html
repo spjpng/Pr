@@ -275,32 +275,20 @@
     footer a:hover { color: #888; }
   </style>
 
-  <!-- ── Firebase (optional) — paste your config to enable cross-device sync ── -->
-  <script type="module">
-    const firebaseConfig = {
-      apiKey:            'PASTE_API_KEY',
-      authDomain:        'PASTE_AUTH_DOMAIN',
-      projectId:         'PASTE_PROJECT_ID',
-      storageBucket:     'PASTE_STORAGE_BUCKET',
-      messagingSenderId: 'PASTE_SENDER_ID',
-      appId:             'PASTE_APP_ID',
-    };
-
-    if (firebaseConfig.projectId !== 'PASTE_PROJECT_ID') {
-      (async () => {
-        try {
-          const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
-          const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
-          const app = initializeApp(firebaseConfig);
-          const db  = getFirestore(app);
-          window.__fsPageDoc = doc(db, 'settings', 'page');
-          window.__fsGet     = getDoc;
-          window.dispatchEvent(new Event('firebase-ready'));
-        } catch (e) {}
-      })();
-    }
+  <script>
+    (async function () {
+      try {
+        const cfg = await fetch('/api/config').then(function (r) { return r.json(); });
+        if (!cfg.projectId) return;
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+        const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+        const db = getFirestore(initializeApp(cfg));
+        window.__fsPageDoc = doc(db, 'settings', 'page');
+        window.__fsGet     = getDoc;
+        window.dispatchEvent(new Event('firebase-ready'));
+      } catch (e) {}
+    })();
   </script>
-  <!-- ──────────────────────────────────────────────────────────────────────── -->
 </head>
 <body>
   <div class="container">
@@ -370,15 +358,10 @@
     let YOUTUBE_URL = localStorage.getItem('srtxrp_video_url') || 'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM';
     // ───────────────────────────────────────────────────────────────────────
 
-    // ── Google Sheets endpoint ─────────────────────────────────────────────
-    const SHEETS_URL = 'PASTE_YOUR_APPS_SCRIPT_URL';
-    // ───────────────────────────────────────────────────────────────────────
-
     function postToSheets(data) {
-      if (SHEETS_URL === 'PASTE_YOUR_APPS_SCRIPT_URL') return;
-      fetch(SHEETS_URL, {
-        method: 'POST', mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
+      fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       }).catch(function () {});
     }
