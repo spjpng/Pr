@@ -341,7 +341,7 @@
 
     <!-- Step 4: Done -->
     <div id="done-section" class="hidden">
-      <p class="done-msg" id="done-msg">You're in! Check your inbox soon.</p>
+      <p class="done-msg" id="done-msg">You're in! We'll be in touch soon.</p>
     </div>
   </div>
 
@@ -419,6 +419,8 @@
       if (b) document.getElementById('cta-btn').textContent = b;
       const l = localStorage.getItem('srtxrp_label');
       if (l) document.getElementById('form-label').textContent = l;
+      const d = localStorage.getItem('srtxrp_done_msg');
+      if (d) document.getElementById('done-msg').textContent = d;
       applyPolicySettings();
     })();
 

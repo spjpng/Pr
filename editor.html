@@ -205,6 +205,11 @@
           <label for="f-label">Sub-label Above Form</label>
           <input type="text" id="f-label" />
         </div>
+        <div class="field">
+          <label for="f-done-msg">Confirmation Message</label>
+          <p class="hint">Shown after the survey is completed</p>
+          <input type="text" id="f-done-msg" />
+        </div>
       </div>
     </div>
 
@@ -292,6 +297,7 @@
       privacyUrl:   '',
       tosLabel:     'Terms of Service',
       tosUrl:       '',
+      doneMsg:      "You're in! We'll be in touch soon.",
     };
 
     const DEFAULT_STEPS = [
@@ -306,6 +312,7 @@
     document.getElementById('f-video-url').value = localStorage.getItem('srtxrp_video_url') || DEFAULTS.videoUrl;
     document.getElementById('f-btn-text').value  = localStorage.getItem('srtxrp_btn_text')  || DEFAULTS.btnText;
     document.getElementById('f-label').value     = localStorage.getItem('srtxrp_label')     || DEFAULTS.label;
+    document.getElementById('f-done-msg').value  = localStorage.getItem('srtxrp_done_msg')  || DEFAULTS.doneMsg;
 
     const initAccent = localStorage.getItem('srtxrp_accent') || DEFAULTS.accent;
     const initBg     = localStorage.getItem('srtxrp_bg')     || DEFAULTS.bg;
@@ -473,6 +480,7 @@
       localStorage.setItem('srtxrp_video_url', data.videoUrl);
       localStorage.setItem('srtxrp_btn_text',  data.btnText);
       localStorage.setItem('srtxrp_label',     data.label);
+      localStorage.setItem('srtxrp_done_msg',  document.getElementById('f-done-msg').value.trim() || DEFAULTS.doneMsg);
       localStorage.setItem('srtxrp_accent',    data.accent);
       localStorage.setItem('srtxrp_bg',        data.bg);
 
