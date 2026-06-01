@@ -12,7 +12,11 @@ module.exports = async function handler(req, res) {
     let response = await fetch(url, { ...init, redirect: 'manual' });
     if (response.status === 301 || response.status === 302 || response.status === 307 || response.status === 308) {
       const location = response.headers.get('location');
-      if (location) response = await fetch(location, { ...init, redirect: 'follow' });
+      const allowed = location && (
+        location.startsWith('https://script.google.com/') ||
+        location.startsWith('https://script.googleusercontent.com/')
+      );
+      if (allowed) response = await fetch(location, { ...init, redirect: 'follow' });
     }
     if (!response.ok) {
       console.error('[submit] Sheets responded', response.status);

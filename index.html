@@ -367,10 +367,17 @@
     }
 
     function applyHeadline(text) {
+      const h1 = document.querySelector('h1');
       const i = text.indexOf(' — ');
-      document.querySelector('h1').innerHTML = i >= 0
-        ? text.slice(0, i) + ' — <span>' + text.slice(i + 3) + '</span>'
-        : text;
+      h1.textContent = '';
+      if (i >= 0) {
+        h1.appendChild(document.createTextNode(text.slice(0, i) + ' — '));
+        const span = document.createElement('span');
+        span.textContent = text.slice(i + 3);
+        h1.appendChild(span);
+      } else {
+        h1.textContent = text;
+      }
     }
 
     function applyPolicySettings() {
@@ -521,7 +528,8 @@
       try {
         const u = new URL(url);
         if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
-        return u.searchParams.get('v');
+        if (u.hostname === 'youtube.com' || u.hostname === 'www.youtube.com') return u.searchParams.get('v');
+        return null;
       } catch { return null; }
     }
 
