@@ -32,6 +32,40 @@
 
     h1 { font-size: 1.5rem; font-weight: 800; color: #ffffff; }
 
+    /* ── Tabs ── */
+    .tab-bar {
+      display: flex;
+      gap: 4px;
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      padding: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      background: none;
+      border: none;
+      border-radius: 7px;
+      color: #666;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.02em;
+    }
+
+    .tab-btn.active {
+      background: #1e1e1e;
+      color: #e0ff4f;
+    }
+
+    .tab-btn:hover:not(.active) { color: #aaa; }
+
+    .tab-panel { display: flex; flex-direction: column; gap: 32px; }
+    .tab-panel.hidden { display: none !important; }
+
     .section-title {
       font-size: 0.75rem; color: #555; letter-spacing: 0.08em;
       text-transform: uppercase; padding-bottom: 4px;
@@ -70,7 +104,7 @@
     }
     .color-hex:focus { border-color: #e0ff4f; }
 
-    /* ── Survey section ── */
+    /* ── Cards (survey steps + preframe items) ── */
     .step-card {
       background: #111;
       border: 1px solid #222;
@@ -111,19 +145,12 @@
     }
     .remove-option-btn:hover { color: #ff4f4f; }
 
-    .add-option-btn {
+    .add-option-btn, .add-open-ended-btn {
       background: none; border: 1px dashed #2e2e2e; color: #666;
       font-size: 0.8rem; padding: 8px; border-radius: 6px; cursor: pointer;
       width: 100%; text-align: center; transition: border-color 0.2s, color 0.2s;
     }
-    .add-option-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
-
-    .add-open-ended-btn {
-      background: none; border: 1px dashed #2e2e2e; color: #666;
-      font-size: 0.8rem; padding: 8px; border-radius: 6px; cursor: pointer;
-      width: 100%; text-align: center; transition: border-color 0.2s, color 0.2s;
-    }
-    .add-open-ended-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
+    .add-option-btn:hover, .add-open-ended-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
 
     .oe-row {
       display: flex; align-items: center; gap: 8px;
@@ -138,12 +165,12 @@
     }
     .oe-row input { flex: 1; }
 
-    .add-step-btn {
+    .add-step-btn, .add-item-btn {
       background: none; border: 1px dashed #2e2e2e; color: #666;
       font-size: 0.85rem; padding: 12px; border-radius: 8px; cursor: pointer;
       width: 100%; text-align: center; transition: border-color 0.2s, color 0.2s;
     }
-    .add-step-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
+    .add-step-btn:hover, .add-item-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
 
     /* ── Actions ── */
     .actions { display: flex; flex-direction: column; gap: 10px; }
@@ -173,7 +200,6 @@
       try {
         const cfg = await fetch('/api/config').then(function (r) { return r.json(); });
         if (!cfg.projectId) {
-          // Firebase not configured — use localStorage fallback
           if (localStorage.getItem('srtxrp_auth') !== '1') window.location.replace('login.html');
           return;
         }
@@ -196,7 +222,6 @@
         window.__firebaseConfigured = true;
         window.dispatchEvent(new Event('firebase-ready'));
       } catch (e) {
-        // Firebase failed to load — fall back to localStorage
         if (localStorage.getItem('srtxrp_auth') !== '1') window.location.replace('login.html');
       }
     })();
@@ -211,145 +236,246 @@
 
     <h1>Edit Page</h1>
 
-    <!-- Content -->
-    <div>
-      <p class="section-title">Content</p>
-      <div class="fields">
-        <div class="field">
-          <label for="f-headline">Headline</label>
-          <p class="hint">Text after " — " turns yellow automatically</p>
-          <input type="text" id="f-headline" />
-        </div>
-        <div class="field">
-          <label for="f-video-url">YouTube URL</label>
-          <input type="url" id="f-video-url" placeholder="https://youtu.be/..." />
-        </div>
-        <div class="field">
-          <label for="f-btn-text">CTA Button Text</label>
-          <input type="text" id="f-btn-text" />
-        </div>
-        <div class="field">
-          <label for="f-label">Sub-label Above Form</label>
-          <input type="text" id="f-label" />
-        </div>
-        <div class="field">
-          <label for="f-done-msg">Confirmation Message</label>
-          <p class="hint">Shown after the survey is completed</p>
-          <input type="text" id="f-done-msg" />
-        </div>
-      </div>
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-landing-btn" type="button">Landing Page</button>
+      <button class="tab-btn" id="tab-preframe-btn" type="button">Preframe Page</button>
     </div>
 
-    <!-- Colors -->
-    <div>
-      <p class="section-title">Colors</p>
-      <div class="fields">
-        <div class="field">
-          <label>Accent Color</label>
-          <p class="hint">Button, highlights, borders</p>
-          <div class="color-row">
-            <input type="color" id="accent-picker" />
-            <input type="text" class="color-hex" id="accent-hex" maxlength="7" placeholder="#e0ff4f" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Background Color</label>
-          <div class="color-row">
-            <input type="color" id="bg-picker" />
-            <input type="text" class="color-hex" id="bg-hex" maxlength="7" placeholder="#0d0d0d" />
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- ═══════════════════════════ LANDING PAGE TAB ═══════════════════════ -->
+    <div class="tab-panel" id="tab-landing">
 
-    <!-- Survey / Workflow -->
-    <div>
-      <p class="section-title">Survey / Workflow</p>
-      <p class="hint" style="margin-bottom:16px;color:#555;font-size:0.8rem;">Shown after email is submitted. Multiple choice — visitors pick one option per step.</p>
-      <div id="steps-list" style="display:flex;flex-direction:column;gap:12px;"></div>
-      <button class="add-step-btn" id="add-step-btn" style="margin-top:12px;">＋ Add Step</button>
-    </div>
-
-    <!-- Legal & Compliance -->
-    <div>
-      <p class="section-title">Legal &amp; Compliance</p>
-      <div class="fields">
-        <div class="field">
-          <label for="f-consent-text">Consent Checkbox Text</label>
-          <textarea id="f-consent-text" rows="2" style="resize:vertical;"></textarea>
-        </div>
-        <div class="field">
-          <label for="f-privacy-label">Privacy Policy Link Text</label>
-          <input type="text" id="f-privacy-label" placeholder="Privacy Policy" />
-        </div>
-        <div class="field">
-          <label for="f-privacy-url">Privacy Policy URL</label>
-          <input type="url" id="f-privacy-url" placeholder="https://..." />
-        </div>
-        <div class="field">
-          <label for="f-tos-label">Terms of Service Link Text</label>
-          <input type="text" id="f-tos-label" placeholder="Terms of Service" />
-        </div>
-        <div class="field">
-          <label for="f-tos-url">Terms of Service URL</label>
-          <input type="url" id="f-tos-url" placeholder="https://..." />
-        </div>
-      </div>
-    </div>
-
-    <!-- Phone Collection -->
-    <div>
-      <p class="section-title">Phone Collection</p>
-      <div class="fields">
-        <div class="field">
-          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;font-size:0.9rem;color:#ccc;">
-            <input type="checkbox" id="f-phone-enabled" style="width:18px;height:18px;accent-color:#e0ff4f;flex-shrink:0;" />
-            Show phone number step after survey
-          </label>
-        </div>
-        <div id="phone-options" style="display:none;flex-direction:column;gap:16px;">
+      <!-- Content -->
+      <div>
+        <p class="section-title">Content</p>
+        <div class="fields">
           <div class="field">
-            <label for="f-phone-question">Question</label>
-            <input type="text" id="f-phone-question" placeholder="One last thing — what's your phone number?" />
+            <label for="f-headline">Headline</label>
+            <p class="hint">Text after " — " turns yellow automatically</p>
+            <input type="text" id="f-headline" />
           </div>
           <div class="field">
-            <label for="f-phone-placeholder">Input Placeholder</label>
-            <input type="text" id="f-phone-placeholder" placeholder="+1 (555) 000-0000" />
+            <label for="f-video-url">YouTube URL</label>
+            <input type="url" id="f-video-url" placeholder="https://youtu.be/..." />
           </div>
           <div class="field">
-            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;font-size:0.9rem;color:#ccc;">
-              <input type="checkbox" id="f-phone-skippable" style="width:18px;height:18px;accent-color:#e0ff4f;flex-shrink:0;" />
-              Show "Skip" link
-            </label>
+            <label for="f-btn-text">CTA Button Text</label>
+            <input type="text" id="f-btn-text" />
           </div>
         </div>
       </div>
+
+      <!-- Colors -->
+      <div>
+        <p class="section-title">Colors</p>
+        <div class="fields">
+          <div class="field">
+            <label>Accent Color</label>
+            <p class="hint">Button, highlights, borders</p>
+            <div class="color-row">
+              <input type="color" id="accent-picker" />
+              <input type="text" class="color-hex" id="accent-hex" maxlength="7" placeholder="#e0ff4f" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Background Color</label>
+            <div class="color-row">
+              <input type="color" id="bg-picker" />
+              <input type="text" class="color-hex" id="bg-hex" maxlength="7" placeholder="#0d0d0d" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Survey / Workflow -->
+      <div>
+        <p class="section-title">Survey / Workflow</p>
+        <p class="hint" style="margin-bottom:16px;color:#555;font-size:0.8rem;">Shown after CTA is clicked. Multiple choice — visitors pick one option per step.</p>
+        <div id="steps-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+        <button class="add-step-btn" id="add-step-btn" style="margin-top:12px;">＋ Add Step</button>
+      </div>
+
+      <!-- Legal & Compliance -->
+      <div>
+        <p class="section-title">Legal &amp; Compliance</p>
+        <div class="fields">
+          <div class="field">
+            <label for="f-consent-text">Consent Checkbox Text</label>
+            <textarea id="f-consent-text" rows="2" style="resize:vertical;"></textarea>
+          </div>
+          <div class="field">
+            <label for="f-privacy-label">Privacy Policy Link Text</label>
+            <input type="text" id="f-privacy-label" placeholder="Privacy Policy" />
+          </div>
+          <div class="field">
+            <label for="f-privacy-url">Privacy Policy URL</label>
+            <input type="url" id="f-privacy-url" placeholder="https://..." />
+          </div>
+          <div class="field">
+            <label for="f-tos-label">Terms of Service Link Text</label>
+            <input type="text" id="f-tos-label" placeholder="Terms of Service" />
+          </div>
+          <div class="field">
+            <label for="f-tos-url">Terms of Service URL</label>
+            <input type="url" id="f-tos-url" placeholder="https://..." />
+          </div>
+        </div>
+      </div>
+
     </div>
+    <!-- end #tab-landing -->
+
+    <!-- ═══════════════════════════ PREFRAME PAGE TAB ══════════════════════ -->
+    <div class="tab-panel hidden" id="tab-preframe">
+
+      <!-- Page Title -->
+      <div>
+        <p class="section-title">Page Title</p>
+        <div class="fields">
+          <div class="field">
+            <label for="pf-title">Title</label>
+            <input type="text" id="pf-title" placeholder="You're almost in — here's what happens next." />
+          </div>
+        </div>
+      </div>
+
+      <!-- What Happens Next -->
+      <div>
+        <p class="section-title">What Happens Next</p>
+        <p class="hint" style="margin-bottom:16px;color:#555;font-size:0.8rem;">Numbered steps shown below the title.</p>
+        <div id="pf-steps-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+        <button class="add-item-btn" id="pf-add-step-btn" style="margin-top:12px;">＋ Add Step</button>
+      </div>
+
+      <!-- Phone Notice -->
+      <div>
+        <p class="section-title">Phone Notice</p>
+        <div class="fields">
+          <div class="field">
+            <label for="pf-phone-notice">Pill Text</label>
+            <input type="text" id="pf-phone-notice" placeholder="📱 Keep your phone nearby" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Real Students / Testimonials -->
+      <div>
+        <p class="section-title">Real Students</p>
+        <div class="fields">
+          <div class="field">
+            <label for="pf-t-heading">Heading</label>
+            <input type="text" id="pf-t-heading" placeholder="Real Students" />
+          </div>
+          <div class="field">
+            <label for="pf-t-subheading">Subheading</label>
+            <input type="text" id="pf-t-subheading" placeholder="Hear It From People Like You" />
+          </div>
+          <div class="field">
+            <label for="pf-t-body">Body Text</label>
+            <textarea id="pf-t-body" rows="3" style="resize:vertical;"></textarea>
+          </div>
+        </div>
+        <p class="hint" style="margin:16px 0 12px;color:#555;font-size:0.8rem;">Videos</p>
+        <div id="pf-t-videos" style="display:flex;flex-direction:column;gap:10px;"></div>
+        <button class="add-item-btn" id="pf-t-add-video" style="margin-top:10px;">＋ Add Video</button>
+      </div>
+
+      <!-- Got Questions -->
+      <div>
+        <p class="section-title">Got Questions?</p>
+        <div class="fields">
+          <div class="field">
+            <label for="pf-g-heading">Heading</label>
+            <input type="text" id="pf-g-heading" placeholder="Got Questions?" />
+          </div>
+          <div class="field">
+            <label for="pf-g-body">Body Text</label>
+            <textarea id="pf-g-body" rows="3" style="resize:vertical;"></textarea>
+          </div>
+        </div>
+        <p class="hint" style="margin:16px 0 12px;color:#555;font-size:0.8rem;">Videos</p>
+        <div id="pf-g-videos" style="display:flex;flex-direction:column;gap:10px;"></div>
+        <button class="add-item-btn" id="pf-g-add-video" style="margin-top:10px;">＋ Add Video</button>
+      </div>
+
+      <!-- While You Wait -->
+      <div>
+        <p class="section-title">While You Wait</p>
+        <div class="fields">
+          <div class="field">
+            <label for="pf-w-heading">Heading</label>
+            <input type="text" id="pf-w-heading" placeholder="While You Wait for Your Call" />
+          </div>
+          <div class="field">
+            <label for="pf-w-subheading">Subheading</label>
+            <input type="text" id="pf-w-subheading" placeholder="Watch This Next" />
+          </div>
+          <div class="field">
+            <label for="pf-w-body">Body Text</label>
+            <textarea id="pf-w-body" rows="3" style="resize:vertical;"></textarea>
+          </div>
+        </div>
+        <p class="hint" style="margin:16px 0 12px;color:#555;font-size:0.8rem;">Videos</p>
+        <div id="pf-w-videos" style="display:flex;flex-direction:column;gap:10px;"></div>
+        <button class="add-item-btn" id="pf-w-add-video" style="margin-top:10px;">＋ Add Video</button>
+      </div>
+
+    </div>
+    <!-- end #tab-preframe -->
 
     <!-- Actions -->
     <div class="actions">
       <button class="save-btn" id="save-btn">Save Changes</button>
       <p class="saved-msg" id="saved-msg">Saved!</p>
       <p class="sync-badge" id="sync-badge">Saving locally only</p>
-      <button class="preview-btn" id="preview-btn">Preview Page</button>
+      <button class="preview-btn" id="preview-btn">Preview Landing Page</button>
+      <button class="preview-btn" id="preview-preframe-btn">Preview Preframe Page</button>
     </div>
   </div>
 
   <script>
 
+    // ── Tab switching ───────────────────────────────────────────────────────
+    document.getElementById('tab-landing-btn').addEventListener('click', function () {
+      document.getElementById('tab-landing').classList.remove('hidden');
+      document.getElementById('tab-preframe').classList.add('hidden');
+      document.getElementById('tab-landing-btn').classList.add('active');
+      document.getElementById('tab-preframe-btn').classList.remove('active');
+      document.getElementById('preview-btn').textContent = 'Preview Landing Page';
+    });
+
+    document.getElementById('tab-preframe-btn').addEventListener('click', function () {
+      document.getElementById('tab-preframe').classList.remove('hidden');
+      document.getElementById('tab-landing').classList.add('hidden');
+      document.getElementById('tab-preframe-btn').classList.add('active');
+      document.getElementById('tab-landing-btn').classList.remove('active');
+    });
+
+    // ── Defaults ────────────────────────────────────────────────────────────
     const DEFAULTS = {
       headline:     "The Footwork That's Taking Over — Watch & Learn Free",
       videoUrl:     'https://youtu.be/ujREEgxEP7g?si=F3UU05KWRFMc85yM',
       btnText:      'Get the Free Tutorial',
-      label:        'Get the full breakdown',
       accent:       '#e0ff4f',
       bg:           '#0d0d0d',
-      consentText:  'I agree to receive marketing emails. You can unsubscribe at any time.',
+      consentText:  'I agree to receive marketing messages. You can unsubscribe at any time.',
       privacyLabel: 'Privacy Policy',
       privacyUrl:   '',
       tosLabel:     'Terms of Service',
       tosUrl:       '',
-      doneMsg:      "You're in! We'll be in touch soon.",
+    };
+
+    const PREFRAME_DEFAULTS = {
+      title: "You're almost in — here's what happens next.",
+      steps: [
+        { text: "You'll get a call from our team within 24 hours to walk you through everything." },
+        { text: "We'll learn about your goals and see if the program is the right fit for you." },
+        { text: "If it's a match, we'll get you started immediately with full access." },
+      ],
+      phoneNotice: "📱 Keep your phone nearby",
+      testimonials: { heading: 'Real Students', subheading: 'Hear It From People Like You', body: 'Real stories from real students inside the Dance Accelerator.', videos: [] },
+      gotQuestions: { heading: 'Got Questions?', body: 'Watch these before your call so we can skip the basics and get straight to your plan.', videos: [] },
+      whileYouWait: { heading: 'While You Wait for Your Call', subheading: 'Watch This Next', body: 'This is the video that changes how you think about building a business.', videos: [] },
     };
 
     const DEFAULT_STEPS = [
@@ -359,12 +485,10 @@
         options: ['Learn the basics', 'Improve my footwork', 'Perform with confidence'] },
     ];
 
-    // ── Populate content fields ─────────────────────────────────────────────
+    // ── Populate landing fields ─────────────────────────────────────────────
     document.getElementById('f-headline').value  = localStorage.getItem('srtxrp_headline')  || DEFAULTS.headline;
     document.getElementById('f-video-url').value = localStorage.getItem('srtxrp_video_url') || DEFAULTS.videoUrl;
     document.getElementById('f-btn-text').value  = localStorage.getItem('srtxrp_btn_text')  || DEFAULTS.btnText;
-    document.getElementById('f-label').value     = localStorage.getItem('srtxrp_label')     || DEFAULTS.label;
-    document.getElementById('f-done-msg').value  = localStorage.getItem('srtxrp_done_msg')  || DEFAULTS.doneMsg;
 
     const initAccent = localStorage.getItem('srtxrp_accent') || DEFAULTS.accent;
     const initBg     = localStorage.getItem('srtxrp_bg')     || DEFAULTS.bg;
@@ -373,27 +497,11 @@
     document.getElementById('bg-picker').value     = initBg;
     document.getElementById('bg-hex').value        = initBg;
 
-    // ── Populate legal fields ───────────────────────────────────────────────
     document.getElementById('f-consent-text').value  = localStorage.getItem('srtxrp_consent_text')  || DEFAULTS.consentText;
     document.getElementById('f-privacy-label').value = localStorage.getItem('srtxrp_privacy_label') || DEFAULTS.privacyLabel;
     document.getElementById('f-privacy-url').value   = localStorage.getItem('srtxrp_privacy_url')   || DEFAULTS.privacyUrl;
     document.getElementById('f-tos-label').value     = localStorage.getItem('srtxrp_tos_label')     || DEFAULTS.tosLabel;
     document.getElementById('f-tos-url').value       = localStorage.getItem('srtxrp_tos_url')       || DEFAULTS.tosUrl;
-
-    // ── Populate phone fields ───────────────────────────────────────────────
-    (function () {
-      let ps = { enabled: false, question: '', placeholder: '', skippable: true };
-      try { const s = localStorage.getItem('srtxrp_phone_step'); if (s) ps = JSON.parse(s); } catch (e) {}
-      document.getElementById('f-phone-enabled').checked     = !!ps.enabled;
-      document.getElementById('f-phone-question').value      = ps.question    || '';
-      document.getElementById('f-phone-placeholder').value   = ps.placeholder || '';
-      document.getElementById('f-phone-skippable').checked   = ps.skippable !== false;
-      document.getElementById('phone-options').style.display = ps.enabled ? 'flex' : 'none';
-    })();
-
-    document.getElementById('f-phone-enabled').addEventListener('change', function () {
-      document.getElementById('phone-options').style.display = this.checked ? 'flex' : 'none';
-    });
 
     // ── Color pickers ───────────────────────────────────────────────────────
     function wireColorPair(pickerId, hexId) {
@@ -427,7 +535,6 @@
       const card = document.createElement('div');
       card.className = 'step-card';
 
-      // Header
       const header = document.createElement('div');
       header.className = 'step-header';
       const num = document.createElement('span');
@@ -437,15 +544,11 @@
       removeStep.className = 'remove-step-btn';
       removeStep.type = 'button';
       removeStep.textContent = 'Remove';
-      removeStep.addEventListener('click', function () {
-        surveySteps.splice(idx, 1);
-        renderSteps();
-      });
+      removeStep.addEventListener('click', function () { surveySteps.splice(idx, 1); renderSteps(); });
       header.appendChild(num);
       header.appendChild(removeStep);
       card.appendChild(header);
 
-      // Question input
       const qField = document.createElement('div');
       qField.className = 'field';
       const qLabel = document.createElement('label');
@@ -459,7 +562,6 @@
       qField.appendChild(qInput);
       card.appendChild(qField);
 
-      // Options
       const optField = document.createElement('div');
       optField.className = 'field';
       const optLabel = document.createElement('label');
@@ -467,9 +569,7 @@
       optField.appendChild(optLabel);
 
       const optList = document.createElement('div');
-      optList.style.display = 'flex';
-      optList.style.flexDirection = 'column';
-      optList.style.gap = '8px';
+      optList.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
 
       function renderOptions() {
         optList.innerHTML = '';
@@ -485,10 +585,7 @@
           removeOpt.className = 'remove-option-btn';
           removeOpt.type = 'button';
           removeOpt.textContent = '×';
-          removeOpt.addEventListener('click', function () {
-            surveySteps[idx].options.splice(oi, 1);
-            renderOptions();
-          });
+          removeOpt.addEventListener('click', function () { surveySteps[idx].options.splice(oi, 1); renderOptions(); });
           row.appendChild(input);
           row.appendChild(removeOpt);
           optList.appendChild(row);
@@ -498,13 +595,9 @@
         addOpt.className = 'add-option-btn';
         addOpt.type = 'button';
         addOpt.textContent = '＋ Add option';
-        addOpt.addEventListener('click', function () {
-          surveySteps[idx].options.push('');
-          renderOptions();
-        });
+        addOpt.addEventListener('click', function () { surveySteps[idx].options.push(''); renderOptions(); });
         optList.appendChild(addOpt);
 
-        // Open-ended option
         if (surveySteps[idx].openEnded && surveySteps[idx].openEnded.enabled) {
           const oeRow = document.createElement('div');
           oeRow.className = 'oe-row';
@@ -515,17 +608,12 @@
           oeInput.type = 'text';
           oeInput.placeholder = 'Hint text shown to visitor...';
           oeInput.value = surveySteps[idx].openEnded.placeholder || '';
-          oeInput.addEventListener('input', function () {
-            surveySteps[idx].openEnded.placeholder = oeInput.value;
-          });
+          oeInput.addEventListener('input', function () { surveySteps[idx].openEnded.placeholder = oeInput.value; });
           const removeOe = document.createElement('button');
           removeOe.className = 'remove-option-btn';
           removeOe.type = 'button';
           removeOe.textContent = '×';
-          removeOe.addEventListener('click', function () {
-            surveySteps[idx].openEnded = { enabled: false };
-            renderOptions();
-          });
+          removeOe.addEventListener('click', function () { surveySteps[idx].openEnded = { enabled: false }; renderOptions(); });
           oeRow.appendChild(badge);
           oeRow.appendChild(oeInput);
           oeRow.appendChild(removeOe);
@@ -535,10 +623,7 @@
           addOe.className = 'add-open-ended-btn';
           addOe.type = 'button';
           addOe.textContent = '＋ Add open-ended';
-          addOe.addEventListener('click', function () {
-            surveySteps[idx].openEnded = { enabled: true, placeholder: 'Type your answer...' };
-            renderOptions();
-          });
+          addOe.addEventListener('click', function () { surveySteps[idx].openEnded = { enabled: true, placeholder: 'Type your answer...' }; renderOptions(); });
           optList.appendChild(addOe);
         }
       }
@@ -546,7 +631,6 @@
       renderOptions();
       optField.appendChild(optList);
       card.appendChild(optField);
-
       return card;
     }
 
@@ -556,14 +640,152 @@
     });
 
     renderSteps();
-    // ───────────────────────────────────────────────────────────────────────
 
+    // ── Preframe step builder ───────────────────────────────────────────────
+    let pfData = JSON.parse(JSON.stringify(PREFRAME_DEFAULTS));
+    try {
+      const stored = localStorage.getItem('srtxrp_preframe');
+      if (stored) pfData = Object.assign({}, PREFRAME_DEFAULTS, JSON.parse(stored));
+    } catch (e) {}
+
+    // Populate text fields
+    document.getElementById('pf-title').value           = pfData.title        || PREFRAME_DEFAULTS.title;
+    document.getElementById('pf-phone-notice').value    = pfData.phoneNotice  || PREFRAME_DEFAULTS.phoneNotice;
+    const tData = pfData.testimonials || PREFRAME_DEFAULTS.testimonials;
+    document.getElementById('pf-t-heading').value       = tData.heading    || '';
+    document.getElementById('pf-t-subheading').value    = tData.subheading || '';
+    document.getElementById('pf-t-body').value          = tData.body       || '';
+    const gData = pfData.gotQuestions || PREFRAME_DEFAULTS.gotQuestions;
+    document.getElementById('pf-g-heading').value       = gData.heading || '';
+    document.getElementById('pf-g-body').value          = gData.body    || '';
+    const wData = pfData.whileYouWait || PREFRAME_DEFAULTS.whileYouWait;
+    document.getElementById('pf-w-heading').value       = wData.heading    || '';
+    document.getElementById('pf-w-subheading').value    = wData.subheading || '';
+    document.getElementById('pf-w-body').value          = wData.body       || '';
+
+    // ── Preframe numbered steps ─────────────────────────────────────────────
+    const pfStepsList = document.getElementById('pf-steps-list');
+
+    function renderPfSteps() {
+      pfStepsList.innerHTML = '';
+      (pfData.steps || []).forEach(function (s, i) {
+        pfStepsList.appendChild(buildPfStepCard(s, i));
+      });
+    }
+
+    function buildPfStepCard(step, idx) {
+      const card = document.createElement('div');
+      card.className = 'step-card';
+      const header = document.createElement('div');
+      header.className = 'step-header';
+      const num = document.createElement('span');
+      num.className = 'step-num';
+      num.textContent = 'Step ' + (idx + 1);
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-step-btn';
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'Remove';
+      removeBtn.addEventListener('click', function () { pfData.steps.splice(idx, 1); renderPfSteps(); });
+      header.appendChild(num);
+      header.appendChild(removeBtn);
+      card.appendChild(header);
+
+      const f = document.createElement('div');
+      f.className = 'field';
+      const lbl = document.createElement('label');
+      lbl.textContent = 'Text';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.placeholder = 'What happens in this step...';
+      inp.value = step.text || '';
+      inp.addEventListener('input', function () { pfData.steps[idx].text = inp.value; });
+      f.appendChild(lbl);
+      f.appendChild(inp);
+      card.appendChild(f);
+      return card;
+    }
+
+    document.getElementById('pf-add-step-btn').addEventListener('click', function () {
+      pfData.steps.push({ text: '' });
+      renderPfSteps();
+    });
+
+    renderPfSteps();
+
+    // ── Preframe video list builder ─────────────────────────────────────────
+    function renderVideoList(containerId, videos) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      videos.forEach(function (v, i) {
+        const card = document.createElement('div');
+        card.className = 'step-card';
+        const header = document.createElement('div');
+        header.className = 'step-header';
+        const num = document.createElement('span');
+        num.className = 'step-num';
+        num.textContent = 'Video ' + (i + 1);
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-step-btn';
+        removeBtn.type = 'button';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', function () { videos.splice(i, 1); renderVideoList(containerId, videos); });
+        header.appendChild(num);
+        header.appendChild(removeBtn);
+        card.appendChild(header);
+
+        const titleField = document.createElement('div');
+        titleField.className = 'field';
+        const titleLbl = document.createElement('label');
+        titleLbl.textContent = 'Video Title';
+        const titleInp = document.createElement('input');
+        titleInp.type = 'text';
+        titleInp.placeholder = "e.g. Griffin's Story";
+        titleInp.value = v.title || '';
+        titleInp.addEventListener('input', function () { videos[i].title = titleInp.value; });
+        titleField.appendChild(titleLbl);
+        titleField.appendChild(titleInp);
+        card.appendChild(titleField);
+
+        const urlField = document.createElement('div');
+        urlField.className = 'field';
+        const urlLbl = document.createElement('label');
+        urlLbl.textContent = 'YouTube URL';
+        const urlInp = document.createElement('input');
+        urlInp.type = 'url';
+        urlInp.placeholder = 'https://youtu.be/...';
+        urlInp.value = v.url || '';
+        urlInp.addEventListener('input', function () { videos[i].url = urlInp.value; });
+        urlField.appendChild(urlLbl);
+        urlField.appendChild(urlInp);
+        card.appendChild(urlField);
+
+        container.appendChild(card);
+      });
+    }
+
+    function wireAddVideo(btnId, containerId, videos) {
+      document.getElementById(btnId).addEventListener('click', function () {
+        videos.push({ title: '', url: '' });
+        renderVideoList(containerId, videos);
+      });
+    }
+
+    renderVideoList('pf-t-videos', tData.videos);
+    renderVideoList('pf-g-videos', gData.videos);
+    renderVideoList('pf-w-videos', wData.videos);
+
+    wireAddVideo('pf-t-add-video', 'pf-t-videos', tData.videos);
+    wireAddVideo('pf-g-add-video', 'pf-g-videos', gData.videos);
+    wireAddVideo('pf-w-add-video', 'pf-w-videos', wData.videos);
+
+    // ── Firebase ready ──────────────────────────────────────────────────────
     window.addEventListener('firebase-ready', function () {
       const badge = document.getElementById('sync-badge');
       badge.textContent = 'Syncing across devices via Firebase';
       badge.classList.add('active');
     });
 
+    // ── Save ────────────────────────────────────────────────────────────────
     document.getElementById('save-btn').addEventListener('click', async function () {
       const btn = this;
       btn.disabled = true;
@@ -575,8 +797,6 @@
         headline:     document.getElementById('f-headline').value.trim()       || DEFAULTS.headline,
         videoUrl:     document.getElementById('f-video-url').value.trim()      || DEFAULTS.videoUrl,
         btnText:      document.getElementById('f-btn-text').value.trim()       || DEFAULTS.btnText,
-        label:        document.getElementById('f-label').value.trim()          || DEFAULTS.label,
-        doneMsg:      document.getElementById('f-done-msg').value.trim()       || DEFAULTS.doneMsg,
         accent:       accent,
         bg:           bg,
         workflow:     surveySteps,
@@ -585,20 +805,33 @@
         privacyUrl:   document.getElementById('f-privacy-url').value.trim(),
         tosLabel:     document.getElementById('f-tos-label').value.trim()      || DEFAULTS.tosLabel,
         tosUrl:       document.getElementById('f-tos-url').value.trim(),
-        phoneStep: {
-          enabled:     document.getElementById('f-phone-enabled').checked,
-          question:    document.getElementById('f-phone-question').value.trim()    || "One last thing — what's your phone number?",
-          placeholder: document.getElementById('f-phone-placeholder').value.trim() || '+1 (555) 000-0000',
-          skippable:   document.getElementById('f-phone-skippable').checked,
+        preframe: {
+          title:       document.getElementById('pf-title').value.trim()        || PREFRAME_DEFAULTS.title,
+          steps:       pfData.steps,
+          phoneNotice: document.getElementById('pf-phone-notice').value.trim() || PREFRAME_DEFAULTS.phoneNotice,
+          testimonials: {
+            heading:    document.getElementById('pf-t-heading').value.trim()    || PREFRAME_DEFAULTS.testimonials.heading,
+            subheading: document.getElementById('pf-t-subheading').value.trim(),
+            body:       document.getElementById('pf-t-body').value.trim(),
+            videos:     tData.videos,
+          },
+          gotQuestions: {
+            heading: document.getElementById('pf-g-heading').value.trim() || PREFRAME_DEFAULTS.gotQuestions.heading,
+            body:    document.getElementById('pf-g-body').value.trim(),
+            videos:  gData.videos,
+          },
+          whileYouWait: {
+            heading:    document.getElementById('pf-w-heading').value.trim()    || PREFRAME_DEFAULTS.whileYouWait.heading,
+            subheading: document.getElementById('pf-w-subheading').value.trim(),
+            body:       document.getElementById('pf-w-body').value.trim(),
+            videos:     wData.videos,
+          },
         },
       };
 
-      // Save all fields to localStorage
       localStorage.setItem('srtxrp_headline',     data.headline);
       localStorage.setItem('srtxrp_video_url',    data.videoUrl);
       localStorage.setItem('srtxrp_btn_text',     data.btnText);
-      localStorage.setItem('srtxrp_label',        data.label);
-      localStorage.setItem('srtxrp_done_msg',     data.doneMsg);
       localStorage.setItem('srtxrp_accent',       data.accent);
       localStorage.setItem('srtxrp_bg',           data.bg);
       localStorage.setItem('srtxrp_workflow',     JSON.stringify(data.workflow));
@@ -607,7 +840,7 @@
       localStorage.setItem('srtxrp_privacy_url',  data.privacyUrl);
       localStorage.setItem('srtxrp_tos_label',    data.tosLabel);
       localStorage.setItem('srtxrp_tos_url',      data.tosUrl);
-      localStorage.setItem('srtxrp_phone_step',   JSON.stringify(data.phoneStep));
+      localStorage.setItem('srtxrp_preframe',     JSON.stringify(data.preframe));
 
       if (window.__firebaseConfigured && window.__fsPageDoc) {
         try { await window.__fsSet(window.__fsPageDoc, data, { merge: true }); } catch (e) {}
@@ -619,7 +852,11 @@
     });
 
     document.getElementById('preview-btn').addEventListener('click', function () {
-      window.location.href = 'index.html';
+      window.open('index.html', '_blank');
+    });
+
+    document.getElementById('preview-preframe-btn').addEventListener('click', function () {
+      window.open('preframe.html', '_blank');
     });
 
     document.getElementById('logout-btn').addEventListener('click', async function () {

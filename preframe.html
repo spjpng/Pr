@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What Happens Next</title>
+  <style>
+    :root {
+      --accent: #e0ff4f;
+      --bg: #0d0d0d;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: #f0f0f0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px 72px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 56px;
+    }
+
+    /* ── Header ── */
+    .page-title {
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    /* ── Section headers ── */
+    .section-heading {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .section-subheading {
+      font-size: 0.95rem;
+      color: #888;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .section-body {
+      font-size: 0.95rem;
+      color: #ccc;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    /* ── What Happens Next steps ── */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 800;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .step-text {
+      font-size: 0.95rem;
+      color: #ccc;
+      line-height: 1.55;
+      padding-top: 8px;
+    }
+
+    /* ── Phone notice pill ── */
+    .phone-pill {
+      display: flex;
+      justify-content: center;
+    }
+
+    .phone-pill span {
+      display: inline-block;
+      padding: 10px 22px;
+      border: 1px solid var(--accent);
+      border-radius: 999px;
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: rgba(224, 255, 79, 0.06);
+    }
+
+    /* ── Video section ── */
+    .video-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .video-entry {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .video-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #aaa;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1a1a1a;
+    }
+
+    .video-wrapper div { width: 100%; height: 100%; }
+
+    footer {
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+      padding: 24px 0 0;
+      font-size: 0.75rem;
+      color: #444;
+    }
+
+    footer a { color: #666; text-decoration: none; letter-spacing: 0.05em; }
+    footer a:hover { color: #888; }
+  </style>
+
+  <script>
+    (async function () {
+      try {
+        const cfg = await fetch('/api/config').then(function (r) { return r.json(); });
+        if (!cfg.projectId) return;
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+        const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+        const db = getFirestore(initializeApp(cfg));
+        window.__fsPageDoc = doc(db, 'settings', 'page');
+        window.__fsGet     = getDoc;
+        window.dispatchEvent(new Event('firebase-ready'));
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <div class="container" id="main-container">
+    <!-- Rendered by JS -->
+  </div>
+  <footer>Made with <a href="login.html">SRTXRP</a></footer>
+
+  <script>
+    // ── Apply colors from localStorage ─────────────────────────────────────
+    const _accent = localStorage.getItem('srtxrp_accent');
+    const _bg     = localStorage.getItem('srtxrp_bg');
+    if (_accent) document.documentElement.style.setProperty('--accent', _accent);
+    if (_bg)     document.documentElement.style.setProperty('--bg', _bg);
+
+    // ── Default preframe data ──────────────────────────────────────────────
+    const DEFAULTS = {
+      title: "You're almost in — here's what happens next.",
+      steps: [
+        { text: "You'll get a call from our team within 24 hours to walk you through everything." },
+        { text: "We'll learn about your goals and see if the program is the right fit for you." },
+        { text: "If it's a match, we'll get you started immediately with full access." },
+      ],
+      phoneNotice: "📱 Keep your phone nearby",
+      testimonials: {
+        heading: "Real Students",
+        subheading: "Hear It From People Like You",
+        body: "Real stories from real students inside the Dance Accelerator.",
+        videos: [],
+      },
+      gotQuestions: {
+        heading: "Got Questions?",
+        body: "Watch these before your call so we can skip the basics and get straight to your plan.",
+        videos: [],
+      },
+      whileYouWait: {
+        heading: "While You Wait for Your Call",
+        subheading: "Watch This Next",
+        body: "This is the video that changes how you think about building a business.",
+        videos: [],
+      },
+    };
+
+    let preframe = DEFAULTS;
+    try {
+      const stored = localStorage.getItem('srtxrp_preframe');
+      if (stored) preframe = Object.assign({}, DEFAULTS, JSON.parse(stored));
+    } catch (e) {}
+
+    // ── YouTube helpers ────────────────────────────────────────────────────
+    function extractVideoId(url) {
+      try {
+        const u = new URL(url);
+        if (u.hostname === 'youtu.be') return u.pathname.slice(1).split('?')[0];
+        if (u.hostname === 'youtube.com' || u.hostname === 'www.youtube.com') return u.searchParams.get('v');
+        return null;
+      } catch { return null; }
+    }
+
+    const ytPlayers = [];
+    const ytQueue   = [];
+
+    window.onYouTubeIframeAPIReady = function () {
+      ytQueue.forEach(function (item) {
+        const p = new YT.Player(item.id, {
+          width: '100%', height: '100%',
+          videoId: item.videoId,
+          playerVars: { playsinline: 1, rel: 0, fs: 1, modestbranding: 1, iv_load_policy: 3, enablejsapi: 1, controls: 1, autoplay: 0 },
+        });
+        ytPlayers.push(p);
+      });
+    };
+
+    let playerCounter = 0;
+
+    function buildVideoSection(videos) {
+      if (!videos || !videos.length) return null;
+      const wrap = document.createElement('div');
+      wrap.className = 'video-section';
+      videos.forEach(function (v) {
+        const id = extractVideoId(v.url || '');
+        if (!id) return;
+        const entry = document.createElement('div');
+        entry.className = 'video-entry';
+        if (v.title) {
+          const t = document.createElement('p');
+          t.className = 'video-title';
+          t.textContent = v.title;
+          entry.appendChild(t);
+        }
+        const wrapDiv = document.createElement('div');
+        wrapDiv.className = 'video-wrapper';
+        const playerId = 'yt-' + (playerCounter++);
+        const playerDiv = document.createElement('div');
+        playerDiv.id = playerId;
+        wrapDiv.appendChild(playerDiv);
+        entry.appendChild(wrapDiv);
+        wrap.appendChild(entry);
+        ytQueue.push({ id: playerId, videoId: id });
+      });
+      return wrap.children.length ? wrap : null;
+    }
+
+    // ── Render page ────────────────────────────────────────────────────────
+    function render(data) {
+      const container = document.getElementById('main-container');
+      container.innerHTML = '';
+      playerCounter = 0;
+      ytQueue.length = 0;
+
+      // Header
+      const title = document.createElement('h1');
+      title.className = 'page-title';
+      title.textContent = data.title || DEFAULTS.title;
+      container.appendChild(title);
+
+      // What Happens Next
+      if (data.steps && data.steps.length) {
+        const sec = document.createElement('div');
+        const h = document.createElement('h2');
+        h.className = 'section-heading';
+        h.textContent = 'What Happens Next';
+        sec.appendChild(h);
+        const list = document.createElement('div');
+        list.className = 'steps-list';
+        data.steps.forEach(function (s, i) {
+          const item = document.createElement('div');
+          item.className = 'step-item';
+          const num = document.createElement('div');
+          num.className = 'step-number';
+          num.textContent = String(i + 1);
+          const txt = document.createElement('p');
+          txt.className = 'step-text';
+          txt.textContent = s.text || '';
+          item.appendChild(num);
+          item.appendChild(txt);
+          list.appendChild(item);
+        });
+        sec.appendChild(list);
+        container.appendChild(sec);
+      }
+
+      // Phone notice pill
+      if (data.phoneNotice) {
+        const pill = document.createElement('div');
+        pill.className = 'phone-pill';
+        const span = document.createElement('span');
+        span.textContent = data.phoneNotice;
+        pill.appendChild(span);
+        container.appendChild(pill);
+      }
+
+      // Testimonials
+      const tData = data.testimonials || DEFAULTS.testimonials;
+      const tSec = document.createElement('div');
+      const tH = document.createElement('h2');
+      tH.className = 'section-heading';
+      tH.textContent = tData.heading || 'Real Students';
+      tSec.appendChild(tH);
+      if (tData.subheading) {
+        const sh = document.createElement('p');
+        sh.className = 'section-subheading';
+        sh.textContent = tData.subheading;
+        tSec.appendChild(sh);
+      }
+      if (tData.body) {
+        const b = document.createElement('p');
+        b.className = 'section-body';
+        b.textContent = tData.body;
+        tSec.appendChild(b);
+      }
+      const tVids = buildVideoSection(tData.videos);
+      if (tVids) tSec.appendChild(tVids);
+      container.appendChild(tSec);
+
+      // Got Questions
+      const gData = data.gotQuestions || DEFAULTS.gotQuestions;
+      const gSec = document.createElement('div');
+      const gH = document.createElement('h2');
+      gH.className = 'section-heading';
+      gH.textContent = gData.heading || 'Got Questions?';
+      gSec.appendChild(gH);
+      if (gData.body) {
+        const b = document.createElement('p');
+        b.className = 'section-body';
+        b.textContent = gData.body;
+        gSec.appendChild(b);
+      }
+      const gVids = buildVideoSection(gData.videos);
+      if (gVids) gSec.appendChild(gVids);
+      container.appendChild(gSec);
+
+      // While You Wait
+      const wData = data.whileYouWait || DEFAULTS.whileYouWait;
+      const wSec = document.createElement('div');
+      const wH = document.createElement('h2');
+      wH.className = 'section-heading';
+      wH.textContent = wData.heading || 'While You Wait for Your Call';
+      wSec.appendChild(wH);
+      if (wData.subheading) {
+        const sh = document.createElement('p');
+        sh.className = 'section-subheading';
+        sh.textContent = wData.subheading;
+        wSec.appendChild(sh);
+      }
+      if (wData.body) {
+        const b = document.createElement('p');
+        b.className = 'section-body';
+        b.textContent = wData.body;
+        wSec.appendChild(b);
+      }
+      const wVids = buildVideoSection(wData.videos);
+      if (wVids) wSec.appendChild(wVids);
+      container.appendChild(wSec);
+
+      // Load YouTube API if there are any players queued
+      if (ytQueue.length && !window.__ytApiLoaded) {
+        window.__ytApiLoaded = true;
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+      } else if (ytQueue.length && window.YT && window.YT.Player) {
+        window.onYouTubeIframeAPIReady();
+      }
+    }
+
+    render(preframe);
+
+    // ── Firestore sync ─────────────────────────────────────────────────────
+    window.addEventListener('firebase-ready', async function () {
+      try {
+        const snap = await window.__fsGet(window.__fsPageDoc);
+        if (!snap.exists()) return;
+        const d = snap.data();
+
+        if (d.accent) { document.documentElement.style.setProperty('--accent', d.accent); localStorage.setItem('srtxrp_accent', d.accent); }
+        if (d.bg)     { document.documentElement.style.setProperty('--bg', d.bg);          localStorage.setItem('srtxrp_bg', d.bg); }
+
+        if (d.preframe) {
+          localStorage.setItem('srtxrp_preframe', JSON.stringify(d.preframe));
+          preframe = Object.assign({}, DEFAULTS, d.preframe);
+          render(preframe);
+        }
+      } catch (e) {}
+    });
+  </script>
+</body>
+</html>
