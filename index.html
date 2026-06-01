@@ -290,6 +290,10 @@
 
     .open-ended-row button:hover { opacity: 0.9; }
 
+    .phone-skip { text-align: center; margin-top: 10px; }
+    .phone-skip a { font-size: 0.8rem; color: #555; text-decoration: none; }
+    .phone-skip a:hover { color: #888; }
+
     /* Done section */
     .done-msg {
       font-size: 1rem;
@@ -375,7 +379,19 @@
       <div id="survey-options" class="survey-options"></div>
     </div>
 
-    <!-- Step 4: Done -->
+    <!-- Step 4: Phone -->
+    <div id="phone-section" class="hidden">
+      <p id="phone-question" class="survey-question">One last thing — what's your phone number?</p>
+      <div class="open-ended-row">
+        <input type="tel" id="phone-input" placeholder="+1 (555) 000-0000" autocomplete="tel" />
+        <button type="button" id="phone-submit">→</button>
+      </div>
+      <p id="phone-skip" class="phone-skip" style="display:none;">
+        <a href="#" id="phone-skip-link">Skip</a>
+      </p>
+    </div>
+
+    <!-- Step 5: Done -->
     <div id="done-section" class="hidden">
       <p class="done-msg" id="done-msg">You're in! We'll be in touch soon.</p>
     </div>
@@ -454,6 +470,14 @@
       label.appendChild(frag);
     }
 
+    // ── Phone step settings ────────────────────────────────────────────────
+    let phoneStep = { enabled: false, question: "One last thing — what's your phone number?", placeholder: '+1 (555) 000-0000', skippable: true };
+    try {
+      const stored = localStorage.getItem('srtxrp_phone_step');
+      if (stored) phoneStep = JSON.parse(stored);
+    } catch (e) {}
+    // ───────────────────────────────────────────────────────────────────────
+
     // Apply content overrides from localStorage
     (function () {
       const h = localStorage.getItem('srtxrp_headline');
@@ -490,10 +514,37 @@
       document.getElementById('form-section').classList.remove('hidden');
     });
 
+    function showDone() {
+      document.getElementById('done-section').classList.remove('hidden');
+    }
+
+    function showPhoneStep() {
+      const q = document.getElementById('phone-question');
+      const input = document.getElementById('phone-input');
+      q.textContent = phoneStep.question || "One last thing — what's your phone number?";
+      input.placeholder = phoneStep.placeholder || '+1 (555) 000-0000';
+      document.getElementById('phone-skip').style.display = phoneStep.skippable ? 'block' : 'none';
+      document.getElementById('phone-section').classList.remove('hidden');
+    }
+
+    function afterSurvey() {
+      postToSheets({
+        type: 'survey',
+        email: submittedEmail,
+        answers: surveyAnswers,
+        timestamp: new Date().toISOString(),
+      });
+      if (phoneStep.enabled) {
+        showPhoneStep();
+      } else {
+        showDone();
+      }
+    }
+
     function showSurvey() {
       document.getElementById('form-section').classList.add('hidden');
       if (!surveySteps.length) {
-        document.getElementById('done-section').classList.remove('hidden');
+        afterSurvey();
         return;
       }
       surveyIndex   = 0;
@@ -509,15 +560,27 @@
         renderSurveyStep();
       } else {
         document.getElementById('survey-section').classList.add('hidden');
-        document.getElementById('done-section').classList.remove('hidden');
-        postToSheets({
-          type: 'survey',
-          email: submittedEmail,
-          answers: surveyAnswers,
-          timestamp: new Date().toISOString(),
-        });
+        afterSurvey();
       }
     }
+
+    document.getElementById('phone-submit').addEventListener('click', function () {
+      const val = document.getElementById('phone-input').value.trim();
+      if (!val) { document.getElementById('phone-input').focus(); return; }
+      document.getElementById('phone-section').classList.add('hidden');
+      postToSheets({ type: 'phone', email: submittedEmail, phone: val, timestamp: new Date().toISOString() });
+      showDone();
+    });
+
+    document.getElementById('phone-input').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); document.getElementById('phone-submit').click(); }
+    });
+
+    document.getElementById('phone-skip-link').addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('phone-section').classList.add('hidden');
+      showDone();
+    });
 
     function renderSurveyStep() {
       const step = surveySteps[surveyIndex];
@@ -662,6 +725,10 @@
           if (d.tosLabel)     localStorage.setItem('srtxrp_tos_label',     d.tosLabel);
           if (d.tosUrl)       localStorage.setItem('srtxrp_tos_url',       d.tosUrl);
           applyPolicySettings();
+        }
+        if (d.phoneStep) {
+          phoneStep = d.phoneStep;
+          localStorage.setItem('srtxrp_phone_step', JSON.stringify(d.phoneStep));
         }
       } catch (e) {}
     });

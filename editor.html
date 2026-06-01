@@ -297,6 +297,35 @@
       </div>
     </div>
 
+    <!-- Phone Collection -->
+    <div>
+      <p class="section-title">Phone Collection</p>
+      <div class="fields">
+        <div class="field">
+          <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;font-size:0.9rem;color:#ccc;">
+            <input type="checkbox" id="f-phone-enabled" style="width:18px;height:18px;accent-color:#e0ff4f;flex-shrink:0;" />
+            Show phone number step after survey
+          </label>
+        </div>
+        <div id="phone-options" style="display:none;flex-direction:column;gap:16px;">
+          <div class="field">
+            <label for="f-phone-question">Question</label>
+            <input type="text" id="f-phone-question" placeholder="One last thing — what's your phone number?" />
+          </div>
+          <div class="field">
+            <label for="f-phone-placeholder">Input Placeholder</label>
+            <input type="text" id="f-phone-placeholder" placeholder="+1 (555) 000-0000" />
+          </div>
+          <div class="field">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;text-transform:none;font-size:0.9rem;color:#ccc;">
+              <input type="checkbox" id="f-phone-skippable" style="width:18px;height:18px;accent-color:#e0ff4f;flex-shrink:0;" />
+              Show "Skip" link
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Actions -->
     <div class="actions">
       <button class="save-btn" id="save-btn">Save Changes</button>
@@ -350,6 +379,21 @@
     document.getElementById('f-privacy-url').value   = localStorage.getItem('srtxrp_privacy_url')   || DEFAULTS.privacyUrl;
     document.getElementById('f-tos-label').value     = localStorage.getItem('srtxrp_tos_label')     || DEFAULTS.tosLabel;
     document.getElementById('f-tos-url').value       = localStorage.getItem('srtxrp_tos_url')       || DEFAULTS.tosUrl;
+
+    // ── Populate phone fields ───────────────────────────────────────────────
+    (function () {
+      let ps = { enabled: false, question: '', placeholder: '', skippable: true };
+      try { const s = localStorage.getItem('srtxrp_phone_step'); if (s) ps = JSON.parse(s); } catch (e) {}
+      document.getElementById('f-phone-enabled').checked     = !!ps.enabled;
+      document.getElementById('f-phone-question').value      = ps.question    || '';
+      document.getElementById('f-phone-placeholder').value   = ps.placeholder || '';
+      document.getElementById('f-phone-skippable').checked   = ps.skippable !== false;
+      document.getElementById('phone-options').style.display = ps.enabled ? 'flex' : 'none';
+    })();
+
+    document.getElementById('f-phone-enabled').addEventListener('change', function () {
+      document.getElementById('phone-options').style.display = this.checked ? 'flex' : 'none';
+    });
 
     // ── Color pickers ───────────────────────────────────────────────────────
     function wireColorPair(pickerId, hexId) {
@@ -541,6 +585,12 @@
         privacyUrl:   document.getElementById('f-privacy-url').value.trim(),
         tosLabel:     document.getElementById('f-tos-label').value.trim()      || DEFAULTS.tosLabel,
         tosUrl:       document.getElementById('f-tos-url').value.trim(),
+        phoneStep: {
+          enabled:     document.getElementById('f-phone-enabled').checked,
+          question:    document.getElementById('f-phone-question').value.trim()    || "One last thing — what's your phone number?",
+          placeholder: document.getElementById('f-phone-placeholder').value.trim() || '+1 (555) 000-0000',
+          skippable:   document.getElementById('f-phone-skippable').checked,
+        },
       };
 
       // Save all fields to localStorage
@@ -557,6 +607,7 @@
       localStorage.setItem('srtxrp_privacy_url',  data.privacyUrl);
       localStorage.setItem('srtxrp_tos_label',    data.tosLabel);
       localStorage.setItem('srtxrp_tos_url',      data.tosUrl);
+      localStorage.setItem('srtxrp_phone_step',   JSON.stringify(data.phoneStep));
 
       if (window.__firebaseConfigured && window.__fsPageDoc) {
         try { await window.__fsSet(window.__fsPageDoc, data, { merge: true }); } catch (e) {}
