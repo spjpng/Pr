@@ -570,16 +570,30 @@
         const snap = await window.__fsGet(window.__fsPageDoc);
         if (!snap.exists()) return;
         const d = snap.data();
-        if (d.accent)   { document.documentElement.style.setProperty('--accent', d.accent);  localStorage.setItem('srtxrp_accent', d.accent); }
-        if (d.bg)       { document.documentElement.style.setProperty('--bg', d.bg);           localStorage.setItem('srtxrp_bg', d.bg); }
-        if (d.headline) { applyHeadline(d.headline);                                           localStorage.setItem('srtxrp_headline', d.headline); }
-        if (d.btnText)  { document.getElementById('cta-btn').textContent = d.btnText;          localStorage.setItem('srtxrp_btn_text', d.btnText); }
-        if (d.label)    { document.getElementById('form-label').textContent = d.label;         localStorage.setItem('srtxrp_label', d.label); }
+
+        if (d.accent)   { document.documentElement.style.setProperty('--accent', d.accent); localStorage.setItem('srtxrp_accent', d.accent); }
+        if (d.bg)       { document.documentElement.style.setProperty('--bg', d.bg);          localStorage.setItem('srtxrp_bg', d.bg); }
+        if (d.headline) { applyHeadline(d.headline);                                          localStorage.setItem('srtxrp_headline', d.headline); }
+        if (d.btnText)  { document.getElementById('cta-btn').textContent = d.btnText;         localStorage.setItem('srtxrp_btn_text', d.btnText); }
+        if (d.label)    { document.getElementById('form-label').textContent = d.label;        localStorage.setItem('srtxrp_label', d.label); }
+        if (d.doneMsg)  { document.getElementById('done-msg').textContent = d.doneMsg;        localStorage.setItem('srtxrp_done_msg', d.doneMsg); }
         if (d.videoUrl) {
           localStorage.setItem('srtxrp_video_url', d.videoUrl);
           const id = extractVideoId(d.videoUrl);
           if (id && player && d.videoUrl !== YOUTUBE_URL) player.loadVideoById(id);
           YOUTUBE_URL = d.videoUrl;
+        }
+        if (d.workflow && Array.isArray(d.workflow)) {
+          surveySteps = d.workflow;
+          localStorage.setItem('srtxrp_workflow', JSON.stringify(d.workflow));
+        }
+        if (d.consentText || d.privacyUrl || d.tosUrl) {
+          if (d.consentText)  localStorage.setItem('srtxrp_consent_text',  d.consentText);
+          if (d.privacyLabel) localStorage.setItem('srtxrp_privacy_label', d.privacyLabel);
+          if (d.privacyUrl)   localStorage.setItem('srtxrp_privacy_url',   d.privacyUrl);
+          if (d.tosLabel)     localStorage.setItem('srtxrp_tos_label',     d.tosLabel);
+          if (d.tosUrl)       localStorage.setItem('srtxrp_tos_url',       d.tosUrl);
+          applyPolicySettings();
         }
       } catch (e) {}
     });

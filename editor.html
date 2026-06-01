@@ -467,34 +467,36 @@
       const bg     = document.getElementById('bg-hex').value     || DEFAULTS.bg;
 
       const data = {
-        headline:    document.getElementById('f-headline').value.trim()  || DEFAULTS.headline,
-        videoUrl:    document.getElementById('f-video-url').value.trim() || DEFAULTS.videoUrl,
-        btnText:     document.getElementById('f-btn-text').value.trim()  || DEFAULTS.btnText,
-        label:       document.getElementById('f-label').value.trim()     || DEFAULTS.label,
-        accent:      accent,
-        bg:          bg,
+        headline:     document.getElementById('f-headline').value.trim()       || DEFAULTS.headline,
+        videoUrl:     document.getElementById('f-video-url').value.trim()      || DEFAULTS.videoUrl,
+        btnText:      document.getElementById('f-btn-text').value.trim()       || DEFAULTS.btnText,
+        label:        document.getElementById('f-label').value.trim()          || DEFAULTS.label,
+        doneMsg:      document.getElementById('f-done-msg').value.trim()       || DEFAULTS.doneMsg,
+        accent:       accent,
+        bg:           bg,
+        workflow:     surveySteps,
+        consentText:  document.getElementById('f-consent-text').value.trim()   || DEFAULTS.consentText,
+        privacyLabel: document.getElementById('f-privacy-label').value.trim()  || DEFAULTS.privacyLabel,
+        privacyUrl:   document.getElementById('f-privacy-url').value.trim(),
+        tosLabel:     document.getElementById('f-tos-label').value.trim()      || DEFAULTS.tosLabel,
+        tosUrl:       document.getElementById('f-tos-url').value.trim(),
       };
 
-      // Save content + colors to localStorage
-      localStorage.setItem('srtxrp_headline',  data.headline);
-      localStorage.setItem('srtxrp_video_url', data.videoUrl);
-      localStorage.setItem('srtxrp_btn_text',  data.btnText);
-      localStorage.setItem('srtxrp_label',     data.label);
-      localStorage.setItem('srtxrp_done_msg',  document.getElementById('f-done-msg').value.trim() || DEFAULTS.doneMsg);
-      localStorage.setItem('srtxrp_accent',    data.accent);
-      localStorage.setItem('srtxrp_bg',        data.bg);
+      // Save all fields to localStorage
+      localStorage.setItem('srtxrp_headline',     data.headline);
+      localStorage.setItem('srtxrp_video_url',    data.videoUrl);
+      localStorage.setItem('srtxrp_btn_text',     data.btnText);
+      localStorage.setItem('srtxrp_label',        data.label);
+      localStorage.setItem('srtxrp_done_msg',     data.doneMsg);
+      localStorage.setItem('srtxrp_accent',       data.accent);
+      localStorage.setItem('srtxrp_bg',           data.bg);
+      localStorage.setItem('srtxrp_workflow',     JSON.stringify(data.workflow));
+      localStorage.setItem('srtxrp_consent_text', data.consentText);
+      localStorage.setItem('srtxrp_privacy_label',data.privacyLabel);
+      localStorage.setItem('srtxrp_privacy_url',  data.privacyUrl);
+      localStorage.setItem('srtxrp_tos_label',    data.tosLabel);
+      localStorage.setItem('srtxrp_tos_url',      data.tosUrl);
 
-      // Save survey workflow
-      localStorage.setItem('srtxrp_workflow', JSON.stringify(surveySteps));
-
-      // Save legal/compliance settings
-      localStorage.setItem('srtxrp_consent_text',  document.getElementById('f-consent-text').value.trim()  || DEFAULTS.consentText);
-      localStorage.setItem('srtxrp_privacy_label', document.getElementById('f-privacy-label').value.trim() || DEFAULTS.privacyLabel);
-      localStorage.setItem('srtxrp_privacy_url',   document.getElementById('f-privacy-url').value.trim());
-      localStorage.setItem('srtxrp_tos_label',     document.getElementById('f-tos-label').value.trim()     || DEFAULTS.tosLabel);
-      localStorage.setItem('srtxrp_tos_url',       document.getElementById('f-tos-url').value.trim());
-
-      // Firestore sync (content + colors only for now — Firebase deferred for new fields)
       if (window.__firebaseConfigured && window.__fsPageDoc) {
         try { await window.__fsSet(window.__fsPageDoc, data, { merge: true }); } catch (e) {}
       }
