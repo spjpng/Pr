@@ -118,6 +118,26 @@
     }
     .add-option-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
 
+    .add-open-ended-btn {
+      background: none; border: 1px dashed #2e2e2e; color: #666;
+      font-size: 0.8rem; padding: 8px; border-radius: 6px; cursor: pointer;
+      width: 100%; text-align: center; transition: border-color 0.2s, color 0.2s;
+    }
+    .add-open-ended-btn:hover { border-color: #e0ff4f; color: #e0ff4f; }
+
+    .oe-row {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(224,255,79,0.05); border: 1px dashed rgba(224,255,79,0.3);
+      border-radius: 6px; padding: 8px 10px;
+    }
+    .oe-badge {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #e0ff4f;
+      background: rgba(224,255,79,0.12); padding: 2px 7px; border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .oe-row input { flex: 1; }
+
     .add-step-btn {
       background: none; border: 1px dashed #2e2e2e; color: #666;
       font-size: 0.85rem; padding: 12px; border-radius: 8px; cursor: pointer;
@@ -439,6 +459,44 @@
           renderOptions();
         });
         optList.appendChild(addOpt);
+
+        // Open-ended option
+        if (surveySteps[idx].openEnded && surveySteps[idx].openEnded.enabled) {
+          const oeRow = document.createElement('div');
+          oeRow.className = 'oe-row';
+          const badge = document.createElement('span');
+          badge.className = 'oe-badge';
+          badge.textContent = 'Open';
+          const oeInput = document.createElement('input');
+          oeInput.type = 'text';
+          oeInput.placeholder = 'Hint text shown to visitor...';
+          oeInput.value = surveySteps[idx].openEnded.placeholder || '';
+          oeInput.addEventListener('input', function () {
+            surveySteps[idx].openEnded.placeholder = oeInput.value;
+          });
+          const removeOe = document.createElement('button');
+          removeOe.className = 'remove-option-btn';
+          removeOe.type = 'button';
+          removeOe.textContent = '×';
+          removeOe.addEventListener('click', function () {
+            surveySteps[idx].openEnded = { enabled: false };
+            renderOptions();
+          });
+          oeRow.appendChild(badge);
+          oeRow.appendChild(oeInput);
+          oeRow.appendChild(removeOe);
+          optList.appendChild(oeRow);
+        } else {
+          const addOe = document.createElement('button');
+          addOe.className = 'add-open-ended-btn';
+          addOe.type = 'button';
+          addOe.textContent = '＋ Add open-ended';
+          addOe.addEventListener('click', function () {
+            surveySteps[idx].openEnded = { enabled: true, placeholder: 'Type your answer...' };
+            renderOptions();
+          });
+          optList.appendChild(addOe);
+        }
       }
 
       renderOptions();

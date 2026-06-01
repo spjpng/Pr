@@ -254,6 +254,42 @@
       background: #222;
     }
 
+    .open-ended-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .open-ended-row input[type="text"] {
+      flex: 1;
+      padding: 14px 16px;
+      background: #1a1a1a;
+      border: 1px solid #2e2e2e;
+      border-radius: 8px;
+      color: #f0f0f0;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .open-ended-row input[type="text"]:focus { border-color: var(--accent); }
+
+    .open-ended-row button {
+      padding: 14px 18px;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+      width: auto;
+    }
+
+    .open-ended-row button:hover { opacity: 0.9; }
+
     /* Done section */
     .done-msg {
       font-size: 1rem;
@@ -466,6 +502,23 @@
       document.getElementById('survey-section').classList.remove('hidden');
     }
 
+    function advanceSurvey(answer) {
+      surveyAnswers.push(answer);
+      surveyIndex++;
+      if (surveyIndex < surveySteps.length) {
+        renderSurveyStep();
+      } else {
+        document.getElementById('survey-section').classList.add('hidden');
+        document.getElementById('done-section').classList.remove('hidden');
+        postToSheets({
+          type: 'survey',
+          email: submittedEmail,
+          answers: surveyAnswers,
+          timestamp: new Date().toISOString(),
+        });
+      }
+    }
+
     function renderSurveyStep() {
       const step = surveySteps[surveyIndex];
       document.getElementById('survey-progress').textContent =
@@ -480,24 +533,31 @@
         btn.className = 'survey-opt-btn';
         btn.type      = 'button';
         btn.textContent = opt;
-        btn.addEventListener('click', function () {
-          surveyAnswers.push(opt);
-          surveyIndex++;
-          if (surveyIndex < surveySteps.length) {
-            renderSurveyStep();
-          } else {
-            document.getElementById('survey-section').classList.add('hidden');
-            document.getElementById('done-section').classList.remove('hidden');
-            postToSheets({
-              type: 'survey',
-              email: submittedEmail,
-              answers: surveyAnswers,
-              timestamp: new Date().toISOString(),
-            });
-          }
-        });
+        btn.addEventListener('click', function () { advanceSurvey(opt); });
         container.appendChild(btn);
       });
+
+      if (step.openEnded && step.openEnded.enabled) {
+        const row = document.createElement('div');
+        row.className = 'open-ended-row';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = step.openEnded.placeholder || 'Type your answer...';
+        const submit = document.createElement('button');
+        submit.type = 'button';
+        submit.textContent = '→';
+        submit.addEventListener('click', function () {
+          const val = input.value.trim();
+          if (!val) { input.focus(); return; }
+          advanceSurvey(val);
+        });
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') { e.preventDefault(); submit.click(); }
+        });
+        row.appendChild(input);
+        row.appendChild(submit);
+        container.appendChild(row);
+      }
     }
     // ───────────────────────────────────────────────────────────────────────
 
