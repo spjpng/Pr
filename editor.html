@@ -8,7 +8,6 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      visibility: hidden;
       background-color: #0d0d0d;
       color: #f0f0f0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -201,11 +200,7 @@
       try {
         const cfg = await fetch('/api/config').then(function (r) { return r.json(); });
         if (!cfg.projectId) {
-          if (localStorage.getItem('srtxrp_auth') !== '1') {
-            window.location.replace('login.html');
-          } else {
-            document.body.style.visibility = 'visible';
-          }
+          if (localStorage.getItem('srtxrp_auth') !== '1') window.location.replace('login.html');
           return;
         }
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
@@ -217,11 +212,7 @@
         const auth = getAuth(app);
         const db   = getFirestore(app);
         onAuthStateChanged(auth, function (user) {
-          if (!user) {
-            window.location.replace('login.html');
-          } else {
-            document.body.style.visibility = 'visible';
-          }
+          if (!user) window.location.replace('login.html');
         });
         window.__auth               = auth;
         window.__signOut            = signOut;
@@ -231,11 +222,7 @@
         window.__firebaseConfigured = true;
         window.dispatchEvent(new Event('firebase-ready'));
       } catch (e) {
-        if (localStorage.getItem('srtxrp_auth') !== '1') {
-          window.location.replace('login.html');
-        } else {
-          document.body.style.visibility = 'visible';
-        }
+        if (localStorage.getItem('srtxrp_auth') !== '1') window.location.replace('login.html');
       }
     })();
   </script>
