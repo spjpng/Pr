@@ -106,7 +106,10 @@
     (async function () {
       try {
         const cfg = await fetch('/api/config').then(function (r) { return r.json(); });
-        if (!cfg.projectId) return;
+        if (!cfg.projectId) {
+          if (localStorage.getItem('srtxrp_auth') === '1') window.location.replace('editor.html');
+          return;
+        }
         const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
         const { getAuth, signInWithEmailAndPassword, onAuthStateChanged } =
           await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
@@ -118,7 +121,9 @@
         window.__signIn             = signInWithEmailAndPassword;
         window.__firebaseConfigured = true;
         window.dispatchEvent(new Event('firebase-ready'));
-      } catch (e) {}
+      } catch (e) {
+        if (localStorage.getItem('srtxrp_auth') === '1') window.location.replace('editor.html');
+      }
     })();
   </script>
 </head>
@@ -204,9 +209,6 @@
       }
     });
 
-    if (!window.__firebaseConfigured && localStorage.getItem('srtxrp_auth') === '1') {
-      window.location.replace('editor.html');
-    }
   </script>
 </body>
 </html>
